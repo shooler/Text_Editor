@@ -10,7 +10,7 @@ import sys
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
 root.pack_propagate(0)
-	
+
 
 def resizeMe(x):
 	if x %2 == 0:
@@ -44,3 +44,5 @@ textPad = ScrolledText(root, width=100, height=25,
 					  wrap = Tkinter.WORD
 					  )
 textPad.pack(side=LEFT, expand=TRUE, fill=BOTH)
+textPad.mark_set("insert", "1.0")
+textPad.focus_set()

@@ -8,6 +8,7 @@ import file
 import windows
 import ttk
 import textConfig
+import utilityKeys
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
@@ -15,6 +16,8 @@ from windows import *
 from tabs import *
 from textConfig import *
 
+
+ukeys = utilityKeys
 customfont = windows.customFont
 mast = windows.root
 tconf = textConfig.callAll
@@ -58,18 +61,22 @@ class main(object):
 			menu.add_cascade(label="Help", menu=helpmenu)
 			helpmenu.add_command(label="About...", command=self.about)
 			
-				#adding some keybindingsimport main
-			textPad.bind("<Control-Key-l>", self.newLine)
+			#adding some keybindingsimport main
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
 			textPad.bind("<KeyRelease-Up>", self.scrollup)
 			textPad.bind("<KeyRelease-Down>", self.scrolldn)
-			textPad.bind("<Control-KP_Add>", self.zoom_in)
-			textPad.bind("<Control-KP_Subtract>", self.zoom_out)
 			textPad.bind("<Button-1>", self.clickline)
 			textPad.bind("<Key>", tconf)
-			#textPad.bind("<Key>", self.classlighter)
-				#End keybindingdef lineNumbers(self, thing):
-				
+			
+			#utility keybinds
+			textPad.bind("<Control-Key-l>", ukeys.newLine)
+			textPad.bind("<Control-KP_Add>", ukeys.zoom_in)
+			textPad.bind("<Control-KP_Subtract>", ukeys.zoom_out)
+			textPad.bind("<Control-Key-comma>", ukeys.backTab)
+			textPad.bind("<Control-Key-period>", ukeys.forwardTab)
+			textPad.bind("<Key-F1>", ukeys.getIndex)
+			#end keybinds
+			
 			self.master.mainloop()
 	
 	def clickline(self, dummy):
@@ -90,14 +97,6 @@ class main(object):
 			x.entryconfigure(3, label = "Resize: On")
 		else:
 			x.entryconfigure(3, label = "Resize: Off")
-		
-	def newLine(self, pointless):
-			i = textPad.index(Tkinter.INSERT) # get index of current line "1.1" etc...
-			ilist=i.split('.', 1)
-			lineinsert = str(ilist[0]) + '.end';
-			textPad.mark_set("insert", lineinsert) #change the insertion marker location to end of line
-			textPad.mark_gravity("insert",RIGHT)#set gravity so it inserts to the right of line
-			textPad.insert("insert", "\n")
 						
 	def lineNumbers(self, thing):
 			i = textPad.index(Tkinter.INSERT)
@@ -128,16 +127,6 @@ class main(object):
 			lnText.mark_set("insert", str(ilist[0])+ '.0')
 			lnText.see(str(ilist[0])+ '.0')
 			addline = False
-			
-	def zoom_in(self, bogus):
-			font = customfont
-			size = font.actual()["size"]+2
-			font.configure(size=size)
-
-	def zoom_out(self, bogus):
-			font = customfont
-			size = font.actual()["size"]-2
-			font.configure(size=max(size, 8))
 			
 	def popup(self):
 			self.w=popupWindow(self.master)
