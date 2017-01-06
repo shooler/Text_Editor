@@ -7,28 +7,18 @@ import tabs
 import file
 import windows
 import ttk
+import textConfig
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
 from windows import *
 from tabs import *
-
-
-highlightWords = {'if': 'yellow',
-				  'elif': 'yellow',
-				  'else': 'yellow',
-				  'def' : 'yellow'
-				 }
-classlightWords = {'class ' : 'light blue',
-				  'def '   : 'light blue'
-				  }
-
-def colors(fore, back, insert):
-			textPad.configure(foreground = fore, background = back, insertbackground = insert)	
-			lnText.configure(foreground = fore, background = back, insertbackground = insert)
+from textConfig import *
 
 customfont = windows.customFont
 mast = windows.root
+tconf = textConfig.callAll
+
 
 class main(object):
 	def __init__(self,master):
@@ -76,25 +66,11 @@ class main(object):
 			textPad.bind("<Control-KP_Add>", self.zoom_in)
 			textPad.bind("<Control-KP_Subtract>", self.zoom_out)
 			textPad.bind("<Button-1>", self.clickline)
-			textPad.bind("<Key>", self.highlighter)
+			textPad.bind("<Key>", tconf)
 			#textPad.bind("<Key>", self.classlighter)
 				#End keybindingdef lineNumbers(self, thing):
 				
 			self.master.mainloop()
-
-	def highlighter(self, event):
-		'''the highlight function, called when a Key-press event occurs'''
-		for k,v in highlightWords.iteritems(): # iterate over dict
-			startIndex = '1.0'
-			while True:
-				startIndex = textPad.search(k, startIndex, END) # search for occurence of k
-				if startIndex:
-					endIndex = textPad.index('%s+%dc' % (startIndex, (len(k)))) # find end of k
-					textPad.tag_add(k, startIndex, endIndex) # add tag to k
-					textPad.tag_config(k, foreground=v)      # and color it with v
-					startIndex = endIndex # reset startIndex to continue searching
-				else:
-					break
 	
 	def clickline(self, dummy):
 		textPad.mark_set("insert", CURRENT)
@@ -193,4 +169,6 @@ class popupWindow(object):
 			lnText.configure(background = str(self.bg.get()))
 			self.top.destroy()
 			
-			
+def colors(fore, back, insert):
+			textPad.configure(foreground = fore, background = back, insertbackground = insert)	
+			lnText.configure(foreground = fore, background = back, insertbackground = insert)
