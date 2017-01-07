@@ -38,7 +38,7 @@ class main(object):
 			filemenu = Menu(menu)
 			menu.add_cascade(label="File", menu=filemenu)
 			filemenu.add_command(label="New", command=file.new_file)
-			filemenu.add_command(label="Open", command=file.open_file)
+			filemenu.add_command(label="Open", command=lambda: file.open_file(''))
 			filemenu.add_command(label="Save", command=file.save_file)
 			filemenu.add_command(label="Tab", command=tabs.tab)
 			filemenu.add_separator()
@@ -61,12 +61,14 @@ class main(object):
 			menu.add_cascade(label="Help", menu=helpmenu)
 			helpmenu.add_command(label="About...", command=self.about)
 			
-			#adding some keybindingsimport main
+			#adding some keybindings
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
 			textPad.bind("<KeyRelease-Up>", self.scrollup)
 			textPad.bind("<KeyRelease-Down>", self.scrolldn)
 			textPad.bind("<Button-1>", self.clickline)
 			textPad.bind("<Key>", tconf)
+			textPad.bind("<Control-o>", file.open_file)
+			textPad.bind("<Control-s>", file.save_file)
 			
 			#utility keybinds
 			textPad.bind("<Control-Key-l>", ukeys.newLine)
@@ -99,6 +101,7 @@ class main(object):
 			x.entryconfigure(3, label = "Resize: Off")
 						
 	def lineNumbers(self, thing):
+			#Setline numbers based on textPad length
 			i = textPad.index(Tkinter.INSERT)
 			ilist=i.split('.', 1)
 			lnText.see(i)

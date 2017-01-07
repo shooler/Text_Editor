@@ -1,29 +1,120 @@
 import Tkinter
 import windows
+import re
 from Tkinter import *
 from windows import *
 from decimal import *
 
 textPad = windows.textPad
 
-count = 0
-tagstart = 'x'
-tagend = 'x'
-changeTag = ''
+variablesavestate = {}
 
-highlightWords = {'if': 'yellow',
-				  'elif': 'yellow',
-				  'else': 'yellow',
-				  'def' : 'yellow'
+highlightWords = {'if ' : 'yellow',
+				  'elif ': 'yellow',
+				  'else ': 'yellow',
+				  'def ' : 'yellow',
+				  'import ' : 'yellow',
+				  'global ' : 'yellow',
+				  'for ' : 'yellow',
+				  'range' : 'light blue',
+				  'print' : 'yellow'
 				 }
-classlightWords = {'class ' : 'light blue',
-				  'def '   : 'light blue'
-				  }
 
 def callAll(dummy):
+	variables()
+	dotvariables()
+	variableSaves()
+	imports()
+	defs()
 	highlighter()
-	Quotes()
+	updateQuoteColors()
 
+def updateQuoteColors():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r"['\"](.*?)['\"]", startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			textPad.tag_add("search", startIndex, endIndex)
+			textPad.tag_config("search", foreground="green")      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+
+			
+def defs():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r'(?:def.*)(?=[(])', startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			variable = textPad.get(startIndex, endIndex)
+			textPad.tag_add("defs", startIndex, endIndex)
+			textPad.tag_config("defs", foreground="blue")      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+			
+def imports():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r'(?:import.*)(?=$)', startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			variable = textPad.get(startIndex, endIndex)
+			textPad.tag_add("imp", startIndex, endIndex)
+			textPad.tag_config("imp", foreground="orange")      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+			
+def variables():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r'([a-zA-Z0-9.\[\]]+ *)(?![==])([a-zA-Z0-9.\[\]]+ *)(?=[=]|[+=]|[-=])', startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			variable = textPad.get(startIndex, endIndex).strip()
+			variablesavestate.update({variable : "orange"})
+			textPad.tag_add("vartag", startIndex, endIndex)
+			textPad.tag_config("vartag", foreground="orange")      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+			
+def dotvariables():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r'([a-zA-Z0-9.\[\]]+ *)(?=[.])', startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			variable = textPad.get(startIndex, endIndex).strip()
+			variablesavestate.update({variable : "orange"})
+			textPad.tag_add("dots", startIndex, endIndex)
+			textPad.tag_config("dots", foreground="orange")      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+
+def variableSaves():
+	for k,v in variablesavestate.iteritems(): # iterate over dict
+		startIndex = '1.0'
+		r = r'/^' + k + '$/'
+		while True:
+			startIndex = textPad.search(r, startIndex, END, regexp=True) # search for occurence of k
+			if startIndex:
+				endIndex = textPad.index('%s+%dc' % (startIndex, (len(k)))) # find end of k
+				textPad.tag_add("saves", startIndex, endIndex) # add tag to k
+				textPad.tag_config("saves", foreground=v)      # and color it with v
+				startIndex = endIndex # reset startIndex to continue searching
+			else:
+				break
+				
 def highlighter():
 	'''the highlight function, called when a Key-press event occurs'''
 	for k,v in highlightWords.iteritems(): # iterate over dict
@@ -37,34 +128,4 @@ def highlighter():
 				startIndex = endIndex # reset startIndex to continue searching
 			else:
 				break
-
-
-def Quotes():
-	global tagstart
-	global tagend
-	global changeTag
-	global count
-	ilist = map(int, textPad.index(Tkinter.INSERT).split('.'))
-	if ilist[1] != 0:
-		start = str(ilist[0]) + '.' + str(ilist[1] - 1)
-	else:
-		start = str(ilist[0]) + '.0'
-	end = str(ilist[0]) + '.' + str(ilist[1]) #+ 1)
-	key = textPad.get(start)
-	if 'x' not in tagstart and 'x' not in tagend:
-		textPad.tag_add(changeTag, tagstart, tagend)
-		textPad.tag_config(changeTag, foreground = "green")
-		tagstart = 'x'
-		tagend = 'x'
-		count = 0
-	if ('"' in key or "'" in key) and count == 0:
-		tagstart = str(start)
-		count = 1
-		key = ''
-	if ('"' in key or "'" in key) and count == 1:
-		tagend = str(end)
-		count = 2
-		key = ''
 			
-			
-		
