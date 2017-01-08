@@ -25,15 +25,14 @@ def open_file(*arg):
 		textPad.delete(1.0,END)
 		textPad.insert('1.0', contents)
 		file.close()
-	lnText.delete(1.0, END)
+	lnText.delete(1.0,END)
 	#get line numbers
-	linecount = int(textPad.index('end').split('.')[0]) - 1 
-	for i in range(linecount - 2):
-		lnText.mark_set("insert", str(i) + ".0")
-		lnText.insert("insert", str(i) + "\n")
-	lnText.mark_set("insert", "1.0")
-	lnText.see("insert")
-	lnText.delete(END+'-1l')
+	lnText.delete(1.0, END)
+	i = int(textPad.index('end-1c').split('.')[0])
+	for x in range(i+1):
+		lnText.insert("insert", str(int(x+1)) + '\n')
+	textPad.see("1.0")
+	lnText.see("1.0")
 	tc('x')
 
 def save_file(x):

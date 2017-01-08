@@ -110,34 +110,30 @@ class main(object):
 			x.entryconfigure(3, label = "Resize: Off")
 						
 	def lineNumbers(self, thing):
-			#Setline numbers based on textPad length
-			i = textPad.index(Tkinter.INSERT)
-			ilist=i.split('.', 1)
-			lnText.see(i)
-			lnText.mark_set("insert", ilist[0] + ".0")
-			if i not in self.lineTracker: 
-				#this keeps the program from adding already existing line numbers
-				lnText.insert("insert", ilist[0] + "\n")
-				lnText.update()
-				self.lineTracker.append(i)
+		current = int(textPad.index('insert').split('.')[0])+1
+		lnText.delete(1.0, END)
+		i = int(textPad.index('end-1c').split('.')[0])
+		for x in range(i):
+			lnText.insert("insert", str(int(x+1)) + '\n')
+		textPad.mark_set("insert", str(current))
 
 			
 	#Track scrolling on arrowdown (line numbers will now correspond with actual lines)
 	def scrolldn(self, thing):
 			i = textPad.index(Tkinter.INSERT)
-			ilist = i.split('.', 1)
+			ilist = i.split('.')
 			ilist[0] = int(ilist[0])
 			ilist[0] += 1
-			lnText.mark_set("insert", str(ilist[0]) + '.0')
+			lnText.mark_set("insert", str(ilist[0]) + '.' + str(ilist[1]))
 			lnText.see(str(ilist[0])+ '.0')
 	
 	#Track scrolling on arrowup (line numbers will now correspond with actual lines)
 	def scrollup(self, thing):
 			i = textPad.index(Tkinter.INSERT)
-			ilist = i.split('.', 1)
+			ilist = i.split('.')
 			ilist[0] = int(ilist[0])
 			ilist[0] -= 1
-			lnText.mark_set("insert", str(ilist[0])+ '.0')
+			lnText.mark_set("insert", str(ilist[0]) + '.' + str(ilist[1]))
 			lnText.see(str(ilist[0])+ '.0')
 			addline = False
 			

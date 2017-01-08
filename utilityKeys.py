@@ -45,16 +45,17 @@ def forwardTab(dummy):
 
 #bound to Ctrl l
 def newLine(dummy):
-		i = textPad.index(Tkinter.INSERT) # get index of current line "1.1" etc...
-		ilist=i.split('.', 1)
+		i = textPad.index("insert") # get index of current line "1.1" etc...
+		ilist=i.split('.')
 		lineinsert = str(ilist[0]) + '.end';
 		textPad.mark_set("insert", lineinsert) #change the insertion marker location to end of line
 		textPad.mark_gravity("insert",RIGHT)#set gravity so it inserts to the right of line
 		textPad.insert("insert", "\n")
+		"""
 		new = lnText.get(1.0, END)
 		lineNumbers(i, new)
-
-
+		"""
+"""
 def lineNumbers(i, lineList):
 			ilist=i.split('.', 1)
 			lnText.see(i)
@@ -64,7 +65,7 @@ def lineNumbers(i, lineList):
 				#this keeps the program from adding already existing line numbers
 				lnText.insert("insert", insert + "\n")
 				lnText.update()
-
+"""
 #Next massive block dedicated to searching
 
 #bound to Ctrl - f
