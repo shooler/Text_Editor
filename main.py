@@ -61,7 +61,7 @@ class main(object):
 			menu.add_cascade(label="Help", menu=helpmenu)
 			helpmenu.add_command(label="About...", command=self.about)
 			
-			#adding some keybindings
+			#adding some General keybindings
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
 			textPad.bind("<KeyRelease-Up>", self.scrollup)
 			textPad.bind("<KeyRelease-Down>", self.scrolldn)
@@ -69,14 +69,23 @@ class main(object):
 			textPad.bind("<Key>", tconf)
 			textPad.bind("<Control-o>", file.open_file)
 			textPad.bind("<Control-s>", file.save_file)
+			textPad.bind("<Control-q>", file.exit)
 			
-			#utility keybinds
+			#Utility (non file keybinds)
 			textPad.bind("<Control-Key-l>", ukeys.newLine)
 			textPad.bind("<Control-KP_Add>", ukeys.zoom_in)
 			textPad.bind("<Control-KP_Subtract>", ukeys.zoom_out)
 			textPad.bind("<Control-Key-comma>", ukeys.backTab)
 			textPad.bind("<Control-Key-period>", ukeys.forwardTab)
+			textPad.bind("<Control-Key-f>", ukeys.searchInit)
 			textPad.bind("<Key-F1>", ukeys.getIndex)
+			searchDiag.bind("<Down>", ukeys.searchNext)
+			searchDiag.bind("<KeyRelease-Down>", self.scrolldn)
+			searchDiag.bind("<Up>", ukeys.searchLast)
+			searchDiag.bind("<KeyRelease-Up>", self.scrolldn)
+			searchDiag.bind("<KeyRelease-f>", ukeys.searchClear)
+			searchDiag.bind("<Return>", ukeys.searchReturn)
+			searchDiag.bind("<Escape>", ukeys.doneSearch)
 			#end keybinds
 			
 			self.master.mainloop()

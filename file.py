@@ -13,7 +13,7 @@ tc = textConfig.callAll
 master = windows.root
 filename = ""
 
-def open_file(dummy):
+def open_file(*arg):
 	global filename
 	file = fd.askopenfile(parent=master,mode='rb',title='Select a file')
 	filename = str(file) 		#next few lines convert askopenfile object to readable filepath
@@ -63,6 +63,6 @@ def new_file():
 		save_file()
 		textPad.delete(1.0,END)
 
-def exit():
+def exit(*arg):
 	if tkMessageBox.askokcancel("Quit", "Quit?"):
 		master.destroy()

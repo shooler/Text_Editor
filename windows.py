@@ -5,7 +5,6 @@ from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 import tkFileDialog
 import tkMessageBox
 import sys
-
 	
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
@@ -46,3 +45,18 @@ textPad = ScrolledText(root, width=100, height=25,
 textPad.pack(side=LEFT, expand=TRUE, fill=BOTH)
 textPad.mark_set("insert", "1.0")
 textPad.focus_set()
+
+
+searchDiag = Text(textPad,
+				  background = "black",
+				  foreground = "white",
+				  insertbackground = "white",
+				  height = 1,
+				  padx = 0,
+				  pady = 0,
+				  bd = 0,
+				  highlightthickness = 0,
+				  font = customFont,
+				  width = 100,
+				 )
+searchDiag.pack(side=BOTTOM, fill='x')

@@ -10,12 +10,18 @@ from ScrolledText import *
 tab = "\n"
 spacetab = "    "
 tablength = 1
+searchStartIndex = 0
+searchindex = 0
+searchtext = ''
 
 #function/attribute imports
 textPad = windows.textPad
 lnText = windows.lnText
 customfont = windows.customFont
+searchDiag = windows.searchDiag
 #imports
+
+searchList = []
 
 def getIndex(dummy):
 	print textPad.index(Tkinter.INSERT)
@@ -47,14 +53,8 @@ def newLine(dummy):
 		textPad.insert("insert", "\n")
 		new = lnText.get(1.0, END)
 		lineNumbers(i, new)
-		"""
-		nextLine = str(int(ilist[0]) + 1)
-		if nextLine not in new:
-			lnText.mark_set("insert", ilist[0] + '.end')
-			lnText.insert("insert", "\n")
-			lnText.mark_set("insert", ilist[0] + '.0')
-			lnText.insert("insert", ilist[0])
-		"""
+
+
 def lineNumbers(i, lineList):
 			ilist=i.split('.', 1)
 			lnText.see(i)
@@ -65,6 +65,84 @@ def lineNumbers(i, lineList):
 				lnText.insert("insert", insert + "\n")
 				lnText.update()
 		
+def searchInit(*args):
+	searchDiag.focus_set()
+	
+def searchClear(*args):
+	searchDiag.delete("1.0", END)
+
+def doneSearch(*args):
+	global searchStartIndex
+	global searchIndex
+	global searchtext
+	searchClear()
+	textPad.focus_set()
+	textPad.tag_delete("searchMatch")
+	searchStartIndex = 0
+	searchindex = 0
+	searchtext = ''
+	
+def searchReturn(*args):
+	global searchStartIndex
+	global searchList
+	global searchtext
+	text = searchDiag.get('1.0', "end-1c")
+	searchtext = searchDiag.get('1.0', "end-1c")
+	searchClear()
+	startIndex = "1.0"
+	while True:
+		startIndex = textPad.search(text, startIndex, END)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, len(text))) # find end of k
+			searchList.append(startIndex)
+			startIndex = endIndex # reset startIndex to continue searching
+	
+def searchNext(*args):
+	global searchindex
+	global searchtext
+	global searchStartIndex
+	searchindex = searchindex + 1
+	if searchStartIndex == 0:
+		searchindex = 0
+		searchStartIndex += 1
+	if searchindex >= len(searchList):
+		searchindex = 0
+	if "searchMatch" in textPad.tag_names():
+		textPad.tag_delete("searchMatch")
+	startIndex = searchList[searchindex]
+	endIndex = textPad.index("%s + %sc" % (startIndex, len(searchtext)))
+	textPad.see(startIndex)
+	textPad.mark_set("insert", startIndex)
+	textPad.tag_add("searchMatch", startIndex, endIndex)
+	textPad.tag_config("searchMatch", background = "gray")
+	#removeSearchTag()
+	textPad.update()
+	searchClear()
+	searchDiag.insert("insert", "Match #: " + str(searchindex))
+	
+def searchLast(*args):
+	global searchindex
+	global searchtext
+	global searchStartIndex
+	if searchStartIndex == 0:
+		searchindex = len(searchList)
+		searchStartIndex += 1
+	searchindex = searchindex - 1
+	if searchindex < 0:
+		searchindex = len(searchList) - 1
+	if "searchMatch" in textPad.tag_names():
+		textPad.tag_delete("searchMatch")
+	startIndex = searchList[searchindex]
+	endIndex = textPad.index("%s + %sc" % (startIndex, len(searchtext)))
+	textPad.see(startIndex)
+	textPad.mark_set("insert", startIndex)
+	textPad.tag_add("searchMatch", startIndex, endIndex)
+	textPad.tag_config("searchMatch", background = "gray")
+	#removeSearchTag()
+	textPad.update()
+	searchClear()
+	searchDiag.insert("insert", "Match #: " + str(searchindex))
+	
 #bound to Ctrl -
 #Zooms in on both frames
 def zoom_in(dummy):
