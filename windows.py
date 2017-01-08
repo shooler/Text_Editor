@@ -27,20 +27,27 @@ lnText = Text(root,
 			  padx = 0,
 			  bd = 0,
 			  font = customFont,
+			  highlightthickness = 0,
 			 )
 lnText.pack(side=LEFT, fill='y')
 lnText.insert(1.0, "1\n")
 
+scrollbar = Scrollbar(root)
+scrollbar.pack(side=RIGHT, fill = 'y')
 
-
-textPad = ScrolledText(root, width=100, height=25,
+"""Scrolled"""
+textPad = Text(root, width=100, height=25,
 					  background = "black",
 					  foreground = "white",
 					  insertbackground = "white",
 					  font = customFont,
 					  undo = True,
 					  maxundo = -1,
-					  wrap = Tkinter.WORD
+					  padx = 0,
+					  bd = 0,
+					  wrap = Tkinter.WORD,
+					  highlightthickness = 0,
+			   		  yscrollcommand=scrollbar.set,
 					  )
 textPad.pack(side=LEFT, expand=TRUE, fill=BOTH)
 textPad.mark_set("insert", "1.0")
@@ -58,6 +65,24 @@ searchDiag = Text(textPad,
 				  highlightthickness = 0,
 				  font = customFont,
 				  width = 100,
+				  yscrollcommand=scrollbar.set
 				 )
 searchDiag.pack(side=BOTTOM, fill='x')
 searchDiag.pack_forget()#hides the search bar(default)
+
+def on_scrollbar(*args):
+	'''Scrolls both text widgets when the scrollbar is moved'''
+	textPad.yview(*args)
+	lnText.yview(*args)
+
+def on_textscroll(*args):
+	'''Moves the scrollbar and scrolls text widgets when the mousewheel
+	is moved on a text widget'''
+	scrollbar.set(*args)
+	on_scrollbar('moveto', args[0])
+
+
+# Changing the settings to make the scrolling work
+scrollbar['command'] = on_scrollbar
+textPad['yscrollcommand'] = on_textscroll
+lnText['yscrollcommand'] = on_textscroll

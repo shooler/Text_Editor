@@ -26,7 +26,7 @@ tconf = textConfig.callAll
 class main(object):
 	def __init__(self,master):
 			self.master = master
-			self.lineTracker = "0.0"
+			self.lineTracker = []
 			fchange = font.fontChange()
 			self.res = 0
 			self.tabcount = 0
@@ -119,8 +119,9 @@ class main(object):
 				#this keeps the program from adding already existing line numbers
 				lnText.insert("insert", ilist[0] + "\n")
 				lnText.update()
-				self.lineTracker += (i + " ")
+				self.lineTracker.append(i)
 
+			
 	#Track scrolling on arrowdown (line numbers will now correspond with actual lines)
 	def scrolldn(self, thing):
 			i = textPad.index(Tkinter.INSERT)
