@@ -147,7 +147,7 @@ class main(object):
 			self.master.wait_window(self.w.top)
 			
 	def about(self):
-		label = tkMessageBox.showinfo("About", "Its and editor ya dintextPad.bind("<KeyRelease-Return>", self.lineNumbers)gus")
+		label = tkMessageBox.showinfo("About", "Its and editor ya dingus")
 
 	def dummy():
 		print "stll a dummy"
