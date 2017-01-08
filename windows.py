@@ -23,11 +23,12 @@ lnText = Text(root,
 			  background = "black",
 			  foreground = "white",
 			  insertbackground = "white",
+			  highlightthickness = 0,
 			  width = 4,
 			  padx = 0,
+			  pady = 0,
 			  bd = 0,
 			  font = customFont,
-			  highlightthickness = 0,
 			 )
 lnText.pack(side=LEFT, fill='y')
 lnText.insert(1.0, "1\n")
@@ -44,10 +45,10 @@ textPad = Text(root, width=100, height=25,
 					  undo = True,
 					  maxundo = -1,
 					  padx = 0,
+			   		  pady = 0,
 					  bd = 0,
 					  wrap = Tkinter.WORD,
 					  highlightthickness = 0,
-			   		  yscrollcommand=scrollbar.set,
 					  )
 textPad.pack(side=LEFT, expand=TRUE, fill=BOTH)
 textPad.mark_set("insert", "1.0")
@@ -72,14 +73,14 @@ searchDiag.pack_forget()#hides the search bar(default)
 
 def on_scrollbar(*args):
 	'''Scrolls both text widgets when the scrollbar is moved'''
-	print args
+	#if args[1] != '0.0':
 	textPad.yview(*args)
 	lnText.yview(*args)
+	
 
 def on_textscroll(*args):
 	'''Moves the scrollbar and scrolls text widgets when the mousewheel
 	is moved on a text widget'''
-	print "textscroll args ", args
 	scrollbar.set(*args)
 	on_scrollbar('moveto', args[0])
 

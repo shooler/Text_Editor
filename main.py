@@ -63,10 +63,11 @@ class main(object):
 			
 			#adding some General keybindings
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
-			textPad.bind("<Key-Up>", self.scrollup)
-			textPad.bind("<Key-Down>", self.scrolldn)
+			textPad.bind("<KeyRelease-BackSpace>", self.lineNumbers)
+			textPad.bind("<Up>", self.scrollup)
+			textPad.bind("<Down>", self.scrolldn)
 			textPad.bind("<Button-1>", self.clickline)
-			textPad.bind("<Key>", tconf)
+			textPad.bind("<KeyRelease>", tconf)
 			textPad.bind("<Control-o>", file.open_file)
 			textPad.bind("<Control-s>", file.save_file)
 			textPad.bind("<Control-q>", file.exit)
@@ -111,13 +112,18 @@ class main(object):
 						
 	def lineNumbers(self, thing):
 		lnText.delete(1.0, END)
-		i = int(textPad.index('end-1c').split('.')[0])
-		for x in range(i):
-			lnText.insert("insert", str(int(x+1)) + '\n')
+		i = int(textPad.index('end').split('.')[0])
+		x = int(textPad.index('insert').split('.')[1])
+		for x in range(i-1):
+			if x == 0:
+				lnText.insert("insert", str(int(x+1)))
+			else:
+				lnText.insert("insert", '\n' + str(int(x+1)))
 		current = int(textPad.index('insert').split('.')[0])
-		textPad.mark_set("insert", str(current) + '.0' )
-
-			
+		textPad.mark_set("insert", str(current) + '.' + str(x) )
+		lnText.see(str(current) + '.0' )
+		textPad.see(str(current) + '.0')
+		
 	#Track scrolling on arrowdown (line numbers will now correspond with actual lines)
 	def scrolldn(self, thing):
 			i = textPad.index(Tkinter.INSERT)
@@ -142,7 +148,7 @@ class main(object):
 			self.master.wait_window(self.w.top)
 			
 	def about(self):
-		label = tkMessageBox.showinfo("About", "Its and editor ya dingus")
+		label = tkMessageBox.showinfo("About", "Its and editor ya dintextPad.bind("<KeyRelease-Return>", self.lineNumbers)gus")
 
 	def dummy():
 		print "stll a dummy"
