@@ -67,7 +67,6 @@ class main(object):
 			textPad.bind("<Up>", self.scrollup)
 			textPad.bind("<Down>", self.scrolldn)
 			textPad.bind("<Button-1>", self.clickline)
-			textPad.bind("<KeyRelease>", tconf)
 			textPad.bind("<Control-o>", file.open_file)
 			textPad.bind("<Control-s>", file.save_file)
 			textPad.bind("<Control-q>", file.exit)
@@ -88,7 +87,7 @@ class main(object):
 			searchDiag.bind("<Return>", ukeys.searchReturn)
 			searchDiag.bind("<Escape>", ukeys.doneSearch)
 			#end keybinds
-			
+			textPad.after(100, tconf)
 			self.master.mainloop()
 	
 	def clickline(self, dummy):
