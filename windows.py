@@ -72,12 +72,14 @@ searchDiag.pack_forget()#hides the search bar(default)
 
 def on_scrollbar(*args):
 	'''Scrolls both text widgets when the scrollbar is moved'''
+	print args
 	textPad.yview(*args)
 	lnText.yview(*args)
 
 def on_textscroll(*args):
 	'''Moves the scrollbar and scrolls text widgets when the mousewheel
 	is moved on a text widget'''
+	print "textscroll args ", args
 	scrollbar.set(*args)
 	on_scrollbar('moveto', args[0])
 

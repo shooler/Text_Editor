@@ -110,12 +110,12 @@ class main(object):
 			x.entryconfigure(3, label = "Resize: Off")
 						
 	def lineNumbers(self, thing):
-		current = int(textPad.index('insert').split('.')[0])+1
 		lnText.delete(1.0, END)
 		i = int(textPad.index('end-1c').split('.')[0])
 		for x in range(i):
 			lnText.insert("insert", str(int(x+1)) + '\n')
-		textPad.mark_set("insert", str(current))
+		current = int(textPad.index('insert').split('.')[0])
+		textPad.mark_set("insert", str(current) + '.0' )
 
 			
 	#Track scrolling on arrowdown (line numbers will now correspond with actual lines)
