@@ -64,17 +64,23 @@ def lineNumbers(i, lineList):
 				#this keeps the program from adding already existing line numbers
 				lnText.insert("insert", insert + "\n")
 				lnText.update()
-		
+
+#Next massive block dedicated to searching
+
+#bound to Ctrl - f
 def searchInit(*args):
-	searchDiag.focus_set()
+	searchDiag.pack(side = BOTTOM, fill = 'x') 
+	searchDiag.focus_set() # sets focus to the search bar at the bottom
 	
 def searchClear(*args):
 	searchDiag.delete("1.0", END)
-
-def doneSearch(*args):
+	
+#bound to esc
+def doneSearch(*args):#on pressing escape, resets search bar to defaults
 	global searchStartIndex
 	global searchIndex
 	global searchtext
+	searchDiag.pack_forget()#hides the search bar
 	searchClear()
 	textPad.focus_set()
 	textPad.tag_delete("searchMatch")
@@ -82,7 +88,8 @@ def doneSearch(*args):
 	searchindex = 0
 	searchtext = ''
 	
-def searchReturn(*args):
+#bound to enter
+def searchReturn(*args):#pressing enter initializes the list of indexes for the search
 	global searchStartIndex
 	global searchList
 	global searchtext
@@ -96,13 +103,14 @@ def searchReturn(*args):
 			endIndex = textPad.index("%s + %sc" % (startIndex, len(text))) # find end of k
 			searchList.append(startIndex)
 			startIndex = endIndex # reset startIndex to continue searching
-	
-def searchNext(*args):
-	global searchindex
-	global searchtext
-	global searchStartIndex
-	searchindex = searchindex + 1
-	if searchStartIndex == 0:
+			
+#bound to Down
+def searchNext(*args):					#Iterates forwards through the list
+	global searchindex					#if the tag is detected in the program it is deleted
+	global searchtext					#after that however, a new tag is made at the current
+	global searchStartIndex				#search index, which will be deleted upon calling for the
+	searchindex = searchindex + 1		#next search index
+	if searchStartIndex == 0:			#this will work between both forward and backwards indexing
 		searchindex = 0
 		searchStartIndex += 1
 	if searchindex >= len(searchList):
@@ -115,12 +123,12 @@ def searchNext(*args):
 	textPad.mark_set("insert", startIndex)
 	textPad.tag_add("searchMatch", startIndex, endIndex)
 	textPad.tag_config("searchMatch", background = "gray")
-	#removeSearchTag()
 	textPad.update()
 	searchClear()
 	searchDiag.insert("insert", "Match #: " + str(searchindex))
 	
-def searchLast(*args):
+#bound to Up
+def searchLast(*args):				#Iterates backwards through the list
 	global searchindex
 	global searchtext
 	global searchStartIndex
@@ -138,10 +146,11 @@ def searchLast(*args):
 	textPad.mark_set("insert", startIndex)
 	textPad.tag_add("searchMatch", startIndex, endIndex)
 	textPad.tag_config("searchMatch", background = "gray")
-	#removeSearchTag()
 	textPad.update()
 	searchClear()
 	searchDiag.insert("insert", "Match #: " + str(searchindex))
+	
+#-----------------------END SEARCH DEDICATION------------------------------
 	
 #bound to Ctrl -
 #Zooms in on both frames

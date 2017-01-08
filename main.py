@@ -63,8 +63,8 @@ class main(object):
 			
 			#adding some General keybindings
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
-			textPad.bind("<KeyRelease-Up>", self.scrollup)
-			textPad.bind("<KeyRelease-Down>", self.scrolldn)
+			textPad.bind("<Key-Up>", self.scrollup)
+			textPad.bind("<Key-Down>", self.scrolldn)
 			textPad.bind("<Button-1>", self.clickline)
 			textPad.bind("<Key>", tconf)
 			textPad.bind("<Control-o>", file.open_file)

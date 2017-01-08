@@ -60,3 +60,4 @@ searchDiag = Text(textPad,
 				  width = 100,
 				 )
 searchDiag.pack(side=BOTTOM, fill='x')
+searchDiag.pack_forget()#hides the search bar(default)
