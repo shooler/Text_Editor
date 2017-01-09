@@ -94,16 +94,17 @@ def searchReturn(*args):#pressing enter initializes the list of indexes for the 
 	global searchStartIndex
 	global searchList
 	global searchtext
-	text = searchDiag.get('1.0', "end-1c")
 	searchtext = searchDiag.get('1.0', "end-1c")
+	text = searchtext
 	searchClear()
-	startIndex = "1.0"
+	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(text, startIndex, END)
+		startIndex = textPad.search(text, startIndex, "end-1c")
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, len(text))) # find end of k
 			searchList.append(startIndex)
 			startIndex = endIndex # reset startIndex to continue searching
+			searchNext()
 			
 #bound to Down
 def searchNext(*args):					#Iterates forwards through the list

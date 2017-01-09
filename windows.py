@@ -56,9 +56,9 @@ textPad.focus_set()
 
 
 searchDiag = Text(textPad,
-				  background = "black",
-				  foreground = "white",
-				  insertbackground = "white",
+				  background = "white",
+				  foreground = "black",
+				  insertbackground = "black",
 				  height = 1,
 				  padx = 0,
 				  pady = 0,

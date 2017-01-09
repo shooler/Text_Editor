@@ -21,15 +21,17 @@ highlightWords = {'if ' : 'yellow',
 				 }
 
 def callAll(*args):
-	textPad.after(200, callAll)
 	variables()
 	dotvariables()
 	variableSaves()
 	imports()
 	highlighter()
-	updateQuoteColors()
 	defs()
-
+	updateQuoteColors()
+	updateComments()
+	textPad.after(200, callAll)
+	
+	
 def updateQuoteColors():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
@@ -37,13 +39,13 @@ def updateQuoteColors():
 		startIndex = textPad.search(r"['\"](.*?)['\"]", startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			textPad.tag_add("search", startIndex, endIndex)
-			textPad.tag_config("search", foreground="green")      # and color it with v
+			textPad.tag_add("searchquotes", startIndex, endIndex)
+			textPad.tag_config("searchquotes", foreground="green")      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
 			
-def updateQuoteColors():
+def updateComments():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
