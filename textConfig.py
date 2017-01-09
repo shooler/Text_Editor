@@ -17,21 +17,20 @@ arglist = []
 highlightWords = ['if ', 'elif ', 'else ', 'def ', 'import ', 'global ',
 				  'for ', 'and ', 'range ', 'print ', 'int(', 'str(',
 				  'float(', 'break', 'True', 'False', 'while', 'in ', 'lambda',
-				 '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',]
+				 '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'not',
+				 ]
 
 def callAll(*args):
+	variables()
+	variableSaves()
 	imports()
 	keyColor()
 	defs()
-	updateComments()
 	argColors()
-	variables()
 	dotvariables()
-	variableSaves()
 	selfUpdate()
 	updateQuoteColors()
-	#textPad.after(2000, callAll)
-	
+	updateComments()	
 	
 def updateQuoteColors():
 	countVar = Tkinter.StringVar()
@@ -113,9 +112,8 @@ def variables():
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex).strip()
-			if variable not in variablesavestate:
+			if variable not in variablesavestate and '[]' not in variable:
 				variablesavestate.append(variable)
-				print "Variables Fxn: Added ", variable
 			textPad.tag_add("vartag", startIndex, endIndex)
 			textPad.tag_config("vartag", foreground = cfg.varColor)      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
@@ -135,18 +133,11 @@ def argColors():
 			startIndex = '.'.join(slist)
 			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-3))) # find end of k
 			variable = textPad.get(startIndex, endIndex).strip()
-			"""
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			textPad.tag_add("argtag", startIndex, endIndex)
-			textPad.tag_config("argtag", foreground = cfg.argColor)      # and color it with v4
-			startIndex = endIndex
-			"""
 			vlist = variable.split(',')
 			for i in vlist:
 				i = i.strip()
 				if i not in arglist:
 					arglist.append(i)
-					print "ArgColors Fxn: Added ", i, " to argList"
 		else:
 			break
 	#([\(,]?[' + k + '](?=[ (])
@@ -154,17 +145,20 @@ def argColors():
 	for k in arglist:	
 		startIndex = '1.0'
 		while True:
+			for char in "[]()?^.":
+				if char in k:
+					k = ' '
 			if '*' in k:
-				k = '\\' + k
+				k = re.sub(r'\*', '\\\*', k)
 			for char in '0123456789 - +=':
 				if char in k:
-					k = re.sub('[0-9\-\+\=]', '', k)
+					k = re.sub(r'[0-9\-\+\=]', '', k)
 			r = r'' + k + '(?=[\s*\,\)])'
 			startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
 			if startIndex:
 				endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 				textPad.tag_add("argtag", startIndex, endIndex)
-				textPad.tag_config("argtag", foreground = cfg.argColor)      # and color it with v4
+				textPad.tag_config("argtag", foreground = cfg.varColor)      # and color it with v4
 				startIndex = endIndex # reset startIndex to continue searching
 			else:
 				break
@@ -179,18 +173,20 @@ def dotvariables():
 			variable = textPad.get(startIndex, endIndex).strip()
 			if variable not in variablesavestate:
 				variablesavestate.append(variable)
-				print "DotVariables Fxn: Added ", variable
 			textPad.tag_add("dots", startIndex, endIndex)
 			textPad.tag_config("dots", foreground = cfg.varColor)      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
-#(,|\=)?
-# r = r'/^=?,?' + k + '=?,?$/'
+#r'/^' + k + '$/'
+# (?:\,|\s*|for|if|\+|\-)+'('+k+')'+(?:\s|\+|\-|in)
 def variableSaves():
 	for k in variablesavestate: # iterate over dict
 		startIndex = '1.0'
-		r = r'/^' + k + '$/'
+		print k
+		if k == '[]':
+			break
+		r = r'(?:\,|\s*|for\n|if\n|\+|\-)'+'('+k+')'+'(?:\s|\+|\-|\sin)'
 		while True:
 			startIndex = textPad.search(r, startIndex, END, regexp=True) # search for occurence of k
 			if startIndex:
