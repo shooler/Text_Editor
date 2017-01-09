@@ -1,8 +1,9 @@
 Save State
 
 Change colors:
-	fix str(, int(, float( closing braces )))
+	fix str(, int(, float( closing braces ))) #probably need to count the amount of open braces after opening and then  update
 	fix variables that have preceding / following commas 			& equals
+	remove coloring on commas between ()
 
 set wordwrap on and off
 

@@ -14,10 +14,9 @@ variablesavestate = {}
 
 highlightWords = ['if ', 'elif ', 'else ', 'def ', 'import ', 'global ',
 				  'for ', 'and ', 'range ', 'print ', 'int(', 'str(',
-				  'float(', 'break', 'True', 'False', 'while', 'in ']
+				  'float(', 'break', 'True', 'False', 'while', 'in ', 'lambda']
 
 def callAll(*args):
-	argColors()
 	variables()
 	dotvariables()
 	variableSaves()
@@ -26,6 +25,7 @@ def callAll(*args):
 	defs()
 	updateQuoteColors()
 	updateComments()
+	argColors()
 	selfUpdate()
 	#textPad.after(2000, callAll)
 	
