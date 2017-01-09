@@ -109,19 +109,23 @@ class main(object):
 		else:
 			x.entryconfigure(3, label = "Resize: Off")
 						
-	def lineNumbers(self, thing):
+	def lineNumbers(self, *args):
+		#textPad.after(75, self.lineNumbers)
 		lnText.delete(1.0, END)
-		i = int(textPad.index('end').split('.')[0])
-		x = int(textPad.index('insert').split('.')[1])
+		i = int(textPad.index(END).split('.')[0])
+		x = int(lnText.index('insert').split('.')[1])
+		current = textPad.index('insert')
+		clist = current.split('.')
+		nextline = str(int(clist[0]) + 1)
+		current = '.'.join(clist)
 		for x in range(i-1):
 			if x == 0:
 				lnText.insert("insert", str(int(x+1)))
 			else:
 				lnText.insert("insert", '\n' + str(int(x+1)))
-		current = int(textPad.index('insert').split('.')[0])
-		textPad.mark_set("insert", str(current) + '.' + str(x) )
-		lnText.see(str(current) + '.0' )
-		textPad.see(str(current) + '.0')
+		textPad.mark_set("insert", (current))
+		lnText.see(current)
+		textPad.see(current)
 		
 	#Track scrolling on arrowdown (line numbers will now correspond with actual lines)
 	def scrolldn(self, thing):

@@ -33,7 +33,7 @@ def open_file(*arg):
 		lnText.insert("insert", str(int(x+1)) + '\n')
 	textPad.see("1.0")
 	lnText.see("1.0")
-	tc('x')
+	tc()
 
 def save_file(x):
 		global filename

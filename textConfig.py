@@ -21,13 +21,13 @@ highlightWords = {'if ' : 'yellow',
 				 }
 
 def callAll(*args):
-	textPad.after(500, callAll)
+	textPad.after(1000, callAll)
 	variables()
 	dotvariables()
 	variableSaves()
 	imports()
-	defs()
 	highlighter()
+	defs()
 	updateQuoteColors()
 
 def updateQuoteColors():
@@ -43,14 +43,18 @@ def updateQuoteColors():
 		else:
 			break
 
-			
+#(?:def\s)(?=[(])
 def defs():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'(?:def.*)(?=[(])', startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search(r'(?:def\s)(.*)(?=[(])', startIndex, END, count=countVar, regexp=True)
+		slist = startIndex.split('.')
+		second = str(int(slist[1]) + 3)
+		slist[1] = second
+		startIndex = '.'.join(slist)
 		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-3))) # find end of k
 			variable = textPad.get(startIndex, endIndex)
 			textPad.tag_add("defs", startIndex, endIndex)
 			textPad.tag_config("defs", foreground="blue")      # and color it with v
