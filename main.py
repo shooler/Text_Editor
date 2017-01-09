@@ -62,6 +62,9 @@ class main(object):
 			helpmenu.add_command(label="About...", command=self.about)
 			
 			#adding some General keybindings
+			textPad.bind("<KeyRelease-space>", tconf)
+			textPad.bind("<Return>", tconf)
+			textPad.bind("<Tab>", tconf)
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
 			textPad.bind("<KeyRelease-BackSpace>", self.lineNumbers)
 			textPad.bind("<Up>", self.scrollup)
@@ -87,7 +90,7 @@ class main(object):
 			searchDiag.bind("<Return>", ukeys.searchReturn)
 			searchDiag.bind("<Escape>", ukeys.doneSearch)
 			#end keybinds
-			textPad.after(0, tconf)
+			#textPad.after(0, tconf)
 			self.master.mainloop()
 	
 	def clickline(self, dummy):

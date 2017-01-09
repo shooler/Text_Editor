@@ -1,0 +1,12 @@
+#colors
+defColor = "blue"
+quoteColor = "green"
+commentColor = "grey"
+importColor = "Orange"
+varColor = "Orange"
+bgColor = "black"
+fgColor = "white"
+insertColor = "white"
+castColor = "light blue"
+keyColor = "yellow"
+selfColor = "white"
