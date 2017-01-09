@@ -35,7 +35,7 @@ class main(object):
 			
 			menu = Menu(master)
 			master.config(menu=menu)
-			filemenu = Menu(menu)
+			filemenu = Menu(menu, tearoff=0)
 			menu.add_cascade(label="File", menu=filemenu)
 			filemenu.add_command(label="New", command=file.new_file)
 			filemenu.add_command(label="Open", command=lambda: file.open_file(''))
@@ -45,19 +45,19 @@ class main(object):
 			filemenu.add_command(label="Exit", command=file.exit)
 			
 			
-			stylemenu = Menu(menu)
+			stylemenu = Menu(menu, tearoff=0)
 			menu.add_cascade(label="Style", menu=stylemenu)
 			stylemenu.add_command(label="Colors", command=self.popup)
 			stylemenu.add_command(label="Fonts", command=lambda:fchange.startwindow(master))
 			stylemenu.add_command(label="Resize: On", command=lambda: self.doublecall(stylemenu))
 			
-			submenu = Menu(menu)
+			submenu = Menu(menu, tearoff=0)
 			stylemenu.add_cascade(label="Presets", menu=submenu, underline=0)
 			submenu.add_command(label = "White on Black", command=lambda:colors("white", "black", "white"))
 			submenu.add_command(label = "Black on White", command=lambda:colors("black", "white", "black"))
 			submenu.add_command(label = "Midnight", command=lambda:colors("light blue", "dark slate gray", "light blue"))
 			
-			helpmenu = Menu(menu)
+			helpmenu = Menu(menu, tearoff=0)
 			menu.add_cascade(label="Help", menu=helpmenu)
 			helpmenu.add_command(label="About...", command=self.about)
 			

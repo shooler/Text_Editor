@@ -21,14 +21,14 @@ highlightWords = {'if ' : 'yellow',
 				 }
 
 def callAll(*args):
-	textPad.after(1000, callAll)
+	textPad.after(200, callAll)
 	variables()
 	dotvariables()
 	variableSaves()
 	imports()
 	highlighter()
-	defs()
 	updateQuoteColors()
+	defs()
 
 def updateQuoteColors():
 	countVar = Tkinter.StringVar()
@@ -42,19 +42,31 @@ def updateQuoteColors():
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
+			
+def updateQuoteColors():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r"(?:#)(.*)", startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			textPad.tag_add("comments", startIndex, endIndex)
+			textPad.tag_config("comments", foreground="grey")      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
 
-#(?:def\s)(?=[(])
+#(?:def\s)(.*)(?=[(])
 def defs():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'(?:def\s)(.*)(?=[(])', startIndex, END, count=countVar, regexp=True)
-		slist = startIndex.split('.')
-		second = str(int(slist[1]) + 3)
-		slist[1] = second
-		startIndex = '.'.join(slist)
+		startIndex = textPad.search(r'def\s(.*?)\(', startIndex, END, count=countVar, regexp=True)
 		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-3))) # find end of k
+			slist = startIndex.split('.')
+			slist[1] = str(int(slist[1])+ 3)
+			startIndex = '.'.join(slist)
+			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-4))) # find end of k
 			variable = textPad.get(startIndex, endIndex)
 			textPad.tag_add("defs", startIndex, endIndex)
 			textPad.tag_config("defs", foreground="blue")      # and color it with v
