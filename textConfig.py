@@ -20,7 +20,8 @@ highlightWords = {'if ' : 'yellow',
 				  'print' : 'yellow'
 				 }
 
-def callAll(dummy):
+def callAll(*args):
+	textPad.after(500, callAll)
 	variables()
 	dotvariables()
 	variableSaves()

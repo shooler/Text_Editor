@@ -1,0 +1,9 @@
+Fix stuff not working on defualt files
+
+Save State
+
+Change colors
+
+Set up about shortcuts
+
+Tabs

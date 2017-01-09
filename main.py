@@ -87,7 +87,7 @@ class main(object):
 			searchDiag.bind("<Return>", ukeys.searchReturn)
 			searchDiag.bind("<Escape>", ukeys.doneSearch)
 			#end keybinds
-			textPad.after(100, tconf)
+			textPad.after(0, tconf)
 			self.master.mainloop()
 	
 	def clickline(self, dummy):
