@@ -22,12 +22,11 @@ def open_file(*arg):
 	filename = re.sub('[\'\",]', '', filename)
 	if file != None:
 		contents = file.read()
-		textPad.delete(1.0,END)
+		textPad.delete(1.0,"end-1c")
 		textPad.insert('1.0', contents)
 		file.close()
-	lnText.delete(1.0,END)
 	#get line numbers
-	lnText.delete(1.0, END)
+	lnText.delete(1.0, "end-1c")
 	i = int(textPad.index('end-1c').split('.')[0])
 	for x in range(i+1):
 		lnText.insert("insert", str(int(x+1)) + '\n')

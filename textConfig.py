@@ -17,7 +17,10 @@ highlightWords = {'if ' : 'yellow',
 				  'global ' : 'yellow',
 				  'for ' : 'yellow',
 				  'range' : 'light blue',
-				  'print' : 'yellow'
+				  'print' : 'yellow',
+				  'int('  : 'light blue',
+				  'str('  :	'light blue',
+				  'float(': 'light blue',
 				 }
 
 def callAll(*args):
@@ -119,10 +122,12 @@ def dotvariables():
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
-
+#(,|\=)?
+# r = r'/^=?,?' + k + '=?,?$/'
 def variableSaves():
 	for k,v in variablesavestate.iteritems(): # iterate over dict
 		startIndex = '1.0'
+		print k
 		r = r'/^' + k + '$/'
 		while True:
 			startIndex = textPad.search(r, startIndex, END, regexp=True) # search for occurence of k

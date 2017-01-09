@@ -1,9 +1,13 @@
-Fix stuff not working on defualt files
-
 Save State
 
-Change colors
+Change colors:
+	fix str(, int(, float( closing braces )))
+	fix variables that have preceding / following commas 			& equals
+
+set wordwrap on and off
 
 Set up about shortcuts
 
 Tabs
+
+think about implementing a turn on and off dev colors
