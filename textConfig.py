@@ -12,6 +12,7 @@ cfg = config
 
 variablesavestate = []
 arglist = []
+defslist = []
 
 
 highlightWords = ['if ', 'elif ', 'else ', 'def ', 'import ', 'global ',
@@ -22,10 +23,10 @@ highlightWords = ['if ', 'elif ', 'else ', 'def ', 'import ', 'global ',
 
 def callAll(*args):
 	variables()
-	variableSaves()
 	imports()
 	keyColor()
 	defs()
+	savedDefs()
 	argColors()
 	dotvariables()
 	selfUpdate()
@@ -49,7 +50,7 @@ def updateComments():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r"(?:#)(.*)", startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search(r"(?:#\w|#\s)(.*)", startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			textPad.tag_add("comments", startIndex, endIndex)
@@ -70,17 +71,35 @@ def defs():
 			startIndex = '.'.join(slist)
 			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-4))) # find end of k
 			variable = textPad.get(startIndex, endIndex)
+			defslist.append(variable.strip())
 			textPad.tag_add("defs", startIndex, endIndex)
 			textPad.tag_config("defs", foreground = cfg.defColor)      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
 			
+def savedDefs():
+ 	countVar = Tkinter.StringVar()
+ 	for k in defslist:
+ 		startIndex = '1.0'
+ 		r = r'(' + k + '\(\))'
+ 		while True:
+ 			startIndex = textPad.search(r, startIndex, END, count=countVar, regexp=True)
+ 			if startIndex:
+ 				endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-2))) # find end of k
+ 				textPad.tag_add("saveddefs", startIndex, endIndex)
+ 				textPad.tag_config("saveddefs", foreground = cfg.defColor) 
+ 				variable = textPad.get(startIndex, endIndex)
+ 				#fxnColors("savedDefs", variable)
+ 				startIndex = endIndex # reset startIndex to continue searching
+ 			else:
+ 				break
+			
 def selfUpdate():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'self\.?', startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search(r'self[\.]|self[\(]', startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex)
@@ -180,22 +199,7 @@ def dotvariables():
 			break
 #r'/^' + k + '$/'
 # (?:\,|\s*|for|if|\+|\-)+'('+k+')'+(?:\s|\+|\-|in)
-def variableSaves():
-	for k in variablesavestate: # iterate over dict
-		startIndex = '1.0'
-		print k
-		if k == '[]':
-			break
-		r = r'(?:\,|\s*|for\n|if\n|\+|\-)'+'('+k+')'+'(?:\s|\+|\-|\sin)'
-		while True:
-			startIndex = textPad.search(r, startIndex, END, regexp=True) # search for occurence of k
-			if startIndex:
-				endIndex = textPad.index('%s+%dc' % (startIndex, (len(k)))) # find end of k
-				textPad.tag_add("saves", startIndex, endIndex) # add tag to k
-				textPad.tag_config("saves", foreground=cfg.varColor)      # and color it with v
-				startIndex = endIndex # reset startIndex to continue searching
-			else:
-				break
+
 				
 def keyColor():
 	'''the highlight function, called when a Key-press event occurs'''
