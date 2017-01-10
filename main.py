@@ -77,6 +77,7 @@ class main(object):
 			textPad.bind("<Control-o>", file.open_file)
 			textPad.bind("<Control-s>", file.save_file)
 			textPad.bind("<Control-q>", file.exit)
+			textPad.bind("<Shift-MouseWheel>", windows.on_horizontal)
 			
 			#Utility (non file keybinds)
 			textPad.bind("<Control-Key-l>", ukeys.newLine)
@@ -92,10 +93,11 @@ class main(object):
 			searchDiag.bind("<KeyRelease-Up>", self.scrolldn)
 			searchDiag.bind("<KeyRelease-f>", ukeys.searchClear)
 			searchDiag.bind("<Return>", ukeys.searchReturn)
-			searchDiag.bind("<Escape>", ukeys.doneSearch)
+			searchDiag.bind_all("<Escape>", ukeys.doneSearch)
 			#end keybinds
 			#textPad.after(0, tconf)
 			self.master.mainloop()
+			
 	
 	def clickline(self, dummy):
 		textPad.mark_set("insert", CURRENT)

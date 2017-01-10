@@ -8,9 +8,10 @@ import tkMessageBox
 import sys
 	
 root = Tkinter.Tk(className="Editor")
-root.geometry("500x500")
-root.pack_propagate(0)
-
+#root.geometry("500x500")
+root.grid_propagate(1)
+root.columnconfigure(1, weight=1)
+root.rowconfigure(0, weight=1)
 
 def resizeMe(x):
 	if x %2 == 0:
@@ -31,17 +32,16 @@ lnText = Text(root,
 			  bd = 0,
 			  font = customFont,
 			 )
-lnText.pack(side=LEFT, fill='y')
+lnText.grid(column = 0, row=0, sticky=W+N+S)
 lnText.insert(1.0, "1\n")
 
 scrollbar = Scrollbar(root)
-scrollbar.pack(side=RIGHT, fill = 'y')
+scrollbar.grid(row = 0, column=2, sticky=N+S)
+xscrollbar = Scrollbar(root,  orient = HORIZONTAL, width=0)
+xscrollbar.grid(row=1)
 
-xscrollbar = Scrollbar(root,  orient = HORIZONTAL)
-xscrollbar.pack(side=BOTTOM, fill = 'x', expand=1)
 
-
-textPad = Text(root, width=100, height=25,
+textPad = Text(root,
 					  background = "black",
 					  foreground = "white",
 					  insertbackground = "white",
@@ -55,13 +55,12 @@ textPad = Text(root, width=100, height=25,
 					  highlightthickness = 0,
 					  xscrollcommand = xscrollbar.set
 					  )
-textPad.pack(side=LEFT, expand=TRUE, fill=BOTH)
+textPad.grid(column=1, row = 0, sticky=N+W+S+E)
 textPad.mark_set("insert", "1.0")
 textPad.focus_set()
+#textPad.configure(scrollregion=textPad.bbox(ALL))
 
-
-
-searchDiag = Text(textPad,
+searchDiag = Text(root,
 				  background = "white",
 				  foreground = "black",
 				  insertbackground = "black",
@@ -71,11 +70,10 @@ searchDiag = Text(textPad,
 				  bd = 0,
 				  highlightthickness = 0,
 				  font = customFont,
-				  width = 100,
 				  yscrollcommand=scrollbar.set
 				 )
-searchDiag.pack(side=BOTTOM, fill='x')
-searchDiag.pack_forget()#hides the search bar(default)
+searchDiag.grid(row = 2,columnspan=2, sticky=S)
+searchDiag.grid_forget()#hides the search bar(default)
 
 def on_scrollbar(*args):
 	'''Scrolls both text widgets when the scrollbar is moved'''
@@ -95,3 +93,6 @@ scrollbar['command'] = on_scrollbar
 xscrollbar['command'] = textPad.xview
 textPad['yscrollcommand'] = on_textscroll
 lnText['yscrollcommand'] = on_textscroll
+
+def on_horizontal(event):
+    canvas.xview_scroll(-1 * -event.delta, 'units')

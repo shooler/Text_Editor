@@ -70,7 +70,7 @@ def lineNumbers(i, lineList):
 
 #bound to Ctrl - f
 def searchInit(*args):
-	searchDiag.pack(side = BOTTOM, fill = 'x') 
+	searchDiag.grid(row=2, columnspan=2) 
 	searchDiag.focus_set() # sets focus to the search bar at the bottom
 	
 def searchClear(*args):
@@ -81,7 +81,7 @@ def doneSearch(*args):#on pressing escape, resets search bar to defaults
 	global searchStartIndex
 	global searchIndex
 	global searchtext
-	searchDiag.pack_forget()#hides the search bar
+	searchDiag.grid_forget()#hides the search bar
 	searchClear()
 	textPad.focus_set()
 	textPad.tag_delete("searchMatch")
