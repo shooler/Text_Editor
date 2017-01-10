@@ -1,5 +1,6 @@
 import Tkinter
 import tkFont
+import ttk
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 import tkFileDialog
@@ -36,7 +37,10 @@ lnText.insert(1.0, "1\n")
 scrollbar = Scrollbar(root)
 scrollbar.pack(side=RIGHT, fill = 'y')
 
-"""Scrolled"""
+xscrollbar = Scrollbar(root,  orient = HORIZONTAL)
+xscrollbar.pack(side=BOTTOM, fill = 'x', expand=1)
+
+
 textPad = Text(root, width=100, height=25,
 					  background = "black",
 					  foreground = "white",
@@ -47,12 +51,14 @@ textPad = Text(root, width=100, height=25,
 					  padx = 0,
 			   		  pady = 0,
 					  bd = 0,
-					  wrap = Tkinter.WORD,
+					  wrap = Tkinter.NONE,
 					  highlightthickness = 0,
+					  xscrollcommand = xscrollbar.set
 					  )
 textPad.pack(side=LEFT, expand=TRUE, fill=BOTH)
 textPad.mark_set("insert", "1.0")
 textPad.focus_set()
+
 
 
 searchDiag = Text(textPad,
@@ -73,7 +79,6 @@ searchDiag.pack_forget()#hides the search bar(default)
 
 def on_scrollbar(*args):
 	'''Scrolls both text widgets when the scrollbar is moved'''
-	#if args[1] != '0.0':
 	textPad.yview(*args)
 	lnText.yview(*args)
 	
@@ -87,5 +92,6 @@ def on_textscroll(*args):
 
 # Changing the settings to make the scrolling work
 scrollbar['command'] = on_scrollbar
+xscrollbar['command'] = textPad.xview
 textPad['yscrollcommand'] = on_textscroll
 lnText['yscrollcommand'] = on_textscroll

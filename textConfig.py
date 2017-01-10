@@ -31,6 +31,7 @@ def callAll(*args):
 	savedDefs()
 	argColors()
 	dotvariables()
+	variableUpdate()
 	selfUpdate()
 	updateQuoteColors()
 	updateComments()	
@@ -177,7 +178,7 @@ def dotvariables():
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex).strip()
 			if variable not in variablesavestate:
-				variablesavestate.append(variable)
+				variablesavestate.append(variable.strip())
 			textPad.tag_add("dots", startIndex, endIndex)
 			textPad.tag_config("dots", foreground = cfg.varColor)      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
@@ -190,18 +191,38 @@ def variables():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'([a-zA-Z[,?]+\s?)(?![==])([a-zA-Z]+\s?)(?=[=]|[+=]|[-=])', startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search(r'([a-zA-Z]+\s?)(?![==])([a-zA-Z]+\s?)(?=[=]|[+=]|[-=])(?:\\n)?', startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex).strip()
+			if '\n' in variable:
+				variable = re.sub("\\n(.*)", '', variable)
+			if ' ' in variable:
+				variable = re.sub("(.*)\s", '', variable)
 			if variable not in variablesavestate and '[]' not in variable:
-				variablesavestate.append(variable)		
+				variablesavestate.append(variable.strip())
 			textPad.tag_add("vartag", startIndex, endIndex)
 			textPad.tag_config("vartag", foreground = cfg.varColor)      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
 
+#r'(?:[for\s]|[in\s]|[if\s])'+'('+k+')'+ ''
+def variableUpdate():
+	countVar = Tkinter.StringVar()
+	for k in variablesavestate:
+		r = r'(?:for\s|in\s|if\s|\+[\s*]?|\-[\s*]?|\*[\s*]?|,)'+k+'(?:,)?'
+		startIndex = "1.0"
+		while True:
+			startIndex = textPad.search(r, startIndex, END, count=countVar, regexp=True)
+			if startIndex:
+				endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+				variable = textPad.get(startIndex, endIndex).strip()
+				textPad.tag_add("varup", startIndex, endIndex)
+				textPad.tag_config("varup", foreground = cfg.varColor)      # and color it with v
+				startIndex = endIndex # reset startIndex to continue searching
+			else:
+				break
 				
 def keyColor():
 	'''the highlight function, called when a Key-press event occurs'''
