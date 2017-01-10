@@ -15,11 +15,13 @@ arglist = []
 defslist = []
 
 
-highlightWords = ['if ', 'elif ', 'else ', 'def ', 'import ', 'global ',
+highlightWords = ['if ', 'elif ', 'else', 'def ', 'import ', 'global ',
 				  'for ', 'and ', 'range ', 'print ', 'int(', 'str(',
 				  'float(', 'break', 'True', 'False', 'while', 'in ', 'lambda',
 				 '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'not',
 				 ]
+whitechars = ['[', ']', '{', '}', '(', ')', '='
+			]
 
 def callAll(*args):
 	variables()
@@ -123,22 +125,6 @@ def imports():
 		else:
 			break
 			
-def variables():
-	countVar = Tkinter.StringVar()
-	startIndex = '1.0'
-	while True:
-		startIndex = textPad.search(r'([a-zA-Z0-9[(,]?]+\s?)(?![==])([a-zA-Z0-9]+\s?)(?=[=]|[+=]|[-=])', startIndex, END, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			variable = textPad.get(startIndex, endIndex).strip()
-			if variable not in variablesavestate and '[]' not in variable:
-				variablesavestate.append(variable)
-			textPad.tag_add("vartag", startIndex, endIndex)
-			textPad.tag_config("vartag", foreground = cfg.varColor)      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-			
 #TODO set up splitting on commas and only highlighting words
 #r'\((.*?[^,])\):'
 def argColors():
@@ -186,7 +172,7 @@ def dotvariables():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'([a-zA-Z0-9]+ *)(?=[.]|[=])', startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search(r'([a-zA-Z]+\s*)(?=[.]|[=])', startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex).strip()
@@ -199,6 +185,22 @@ def dotvariables():
 			break
 #r'/^' + k + '$/'
 # (?:\,|\s*|for|if|\+|\-)+'('+k+')'+(?:\s|\+|\-|in)
+
+def variables():
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		startIndex = textPad.search(r'([a-zA-Z[,?]+\s?)(?![==])([a-zA-Z]+\s?)(?=[=]|[+=]|[-=])', startIndex, END, count=countVar, regexp=True)
+		if startIndex:
+			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+			variable = textPad.get(startIndex, endIndex).strip()
+			if variable not in variablesavestate and '[]' not in variable:
+				variablesavestate.append(variable)		
+			textPad.tag_add("vartag", startIndex, endIndex)
+			textPad.tag_config("vartag", foreground = cfg.varColor)      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
 
 				
 def keyColor():
