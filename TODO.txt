@@ -5,5 +5,3 @@ set wordwrap on and off
 Set up about shortcuts
 
 Tabs
-
-think about implementing a turn on and off dev colors

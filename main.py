@@ -95,8 +95,6 @@ class main(object):
 	def toggleDevColors(self,*args):
 		for tag in textPad.tag_names():
 			textPad.tag_delete(tag)
-		for word in textPad.get('1.0', END):
-			textPad.config(fg = textPad.cget('fg'))
 		if self.tconf == textConfig.callAll:
 			self.tconf = self.dummy
 			textPad.bind("<KeyRelease-space>", self.dummy)
