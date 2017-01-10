@@ -1,13 +1,4 @@
-BREAKING:
-	dotVariables needs to exclude all dots within quotes, it will break the coloring if it gets an open bracket or brace
-
 Save State
-
-Change colors:
-	self will highlight even if it is within another word
-	fix str(, int(, float( closing braces ))) #probably need to count the amount of open braces after opening and then  update
-	fix variables that have preceding / following commas 			& equals
-	remove coloring on commas between ()
 
 set wordwrap on and off
 

@@ -8,7 +8,9 @@ import file
 import windows
 import ttk
 import textConfig
+import config
 import utilityKeys
+import itertools
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
@@ -20,17 +22,16 @@ from textConfig import *
 ukeys = utilityKeys
 customfont = windows.customFont
 mast = windows.root
-tconf = textConfig.callAll
-
 
 class main(object):
 	def __init__(self,master):
+			self.tconf = self.dummy
 			self.master = master
 			self.lineTracker = []
 			fchange = font.fontChange()
 			self.res = 0
 			self.tabcount = 0
-			
+			self.toggleDevColors()
 			
 			
 			menu = Menu(master)
@@ -50,6 +51,7 @@ class main(object):
 			stylemenu.add_command(label="Colors", command=self.popup)
 			stylemenu.add_command(label="Fonts", command=lambda:fchange.startwindow(master))
 			stylemenu.add_command(label="Resize: On", command=lambda: self.doublecall(stylemenu))
+			stylemenu.add_command(label="Toggle Highlight", command = self.toggleDevColors)
 			
 			submenu = Menu(menu, tearoff=0)
 			stylemenu.add_cascade(label="Presets", menu=submenu, underline=0)
@@ -62,13 +64,6 @@ class main(object):
 			helpmenu.add_command(label="About...", command=self.about)
 			
 			#adding some General keybindings
-			textPad.bind("<KeyRelease-space>", tconf)
-			textPad.bind("<Return>", tconf)
-			textPad.bind("<Tab>", tconf)
-			textPad.bind("<KeyRelease-Down>", tconf)
-			textPad.bind("<KeyRelease-Up>", tconf)
-			textPad.bind("<KeyRelease-Left>", tconf)
-			textPad.bind("<KeyRelease-Right>", tconf)
 			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
 			textPad.bind("<KeyRelease-BackSpace>", self.lineNumbers)
 			textPad.bind("<Up>", self.scrollup)
@@ -95,10 +90,28 @@ class main(object):
 			searchDiag.bind("<Return>", ukeys.searchReturn)
 			searchDiag.bind_all("<Escape>", ukeys.doneSearch)
 			#end keybinds
-			#textPad.after(0, tconf)
 			self.master.mainloop()
 			
-	
+	def toggleDevColors(self,*args):
+		for tag in textPad.tag_names():
+			textPad.tag_delete(tag)
+		for word in textPad.get('1.0', END):
+			textPad.config(fg = textPad.cget('fg'))
+		if self.tconf == textConfig.callAll:
+			self.tconf = self.dummy
+			textPad.bind("<KeyRelease-space>", self.dummy)
+			textPad.bind("<Return>", self.dummy)
+			textPad.bind("<KeyRelease-Down>", self.dummy)
+			textPad.bind("<KeyRelease-Up>", self.dummy)
+		else:
+			self.tconf = textConfig.callAll
+			textPad.bind("<KeyRelease-space>", self.tconf)
+			textPad.bind("<Return>", self.tconf)
+			textPad.bind("<KeyRelease-Down>", self.tconf)
+			textPad.bind("<KeyRelease-Up>", self.tconf)
+		
+			
+		
 	def clickline(self, dummy):
 		textPad.mark_set("insert", CURRENT)
 		i = textPad.index(Tkinter.INSERT)
@@ -162,8 +175,8 @@ class main(object):
 	def about(self):
 		label = tkMessageBox.showinfo("About", "Its and editor ya dingus")
 
-	def dummy():
-		print "stll a dummy"
+	def dummy(self, *args):
+		return
 		
 		
 class popupWindow(object):
