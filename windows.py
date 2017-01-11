@@ -8,8 +8,8 @@ import tkMessageBox
 import sys
 	
 root = Tkinter.Tk(className="Editor")
-#root.geometry("500x500")
-root.grid_propagate(1)
+root.geometry("500x500")
+root.grid_propagate(0)
 root.columnconfigure(1, weight=1)
 root.rowconfigure(0, weight=1)
 
@@ -19,7 +19,9 @@ def resizeMe(x):
 	if x %2 != 0:
 		root.resizable(0,0)
 	
-customFont = tkFont.Font(family="Helvetica", size=12)
+customFont = tkFont.Font(family="Ubuntu Mono", size=12)
+displayfont = tkFont.Font(family = "Ubuntu Mono", size = 12)
+
 
 lnText = Text(root,
 			  background = "black",

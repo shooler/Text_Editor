@@ -7,16 +7,15 @@ import tabs
 import file
 import windows
 import ttk
-import textConfig
 import config
 import utilityKeys
 import itertools
+import update
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
 from windows import *
 from tabs import *
-from textConfig import *
 
 
 ukeys = utilityKeys
@@ -25,7 +24,7 @@ mast = windows.root
 
 class main(object):
 	def __init__(self,master):
-			self.tconf = self.dummy
+			self.upd = ''
 			self.master = master
 			self.lineTracker = []
 			fchange = font.fontChange()
@@ -95,18 +94,18 @@ class main(object):
 	def toggleDevColors(self,*args):
 		for tag in textPad.tag_names():
 			textPad.tag_delete(tag)
-		if self.tconf == textConfig.callAll:
-			self.tconf = self.dummy
+		if self.upd == update.callAll:
+			self.upd = self.dummy
 			textPad.bind("<KeyRelease-space>", self.dummy)
 			textPad.bind("<Return>", self.dummy)
 			textPad.bind("<KeyRelease-Down>", self.dummy)
 			textPad.bind("<KeyRelease-Up>", self.dummy)
 		else:
-			self.tconf = textConfig.callAll
-			textPad.bind("<KeyRelease-space>", self.tconf)
-			textPad.bind("<Return>", self.tconf)
-			textPad.bind("<KeyRelease-Down>", self.tconf)
-			textPad.bind("<KeyRelease-Up>", self.tconf)
+			self.upd = update.callAll
+			textPad.bind("<KeyRelease-space>", self.upd)
+			textPad.bind("<Return>", self.upd)
+			textPad.bind("<KeyRelease-Down>", self.upd)
+			textPad.bind("<KeyRelease-Up>", self.upd)
 		
 			
 		
