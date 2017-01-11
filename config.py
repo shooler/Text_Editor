@@ -6,10 +6,10 @@ colors = {
 "importColor" : "light blue",
 "varColor" : "Orange",
 "bgColor" : "black",
-"foregroundColor" : "white",
-"insertColor" : "white",
+"foregroundColor" : "Orange",
+"dotColor" : "white",
 "keyColor" : "yellow",
 "selfColor" : "white",
-"argColor" : "brown",
-"tempColor" : "red"
+"numLineColor" : "white",
+"puncColor" : "white"
 }

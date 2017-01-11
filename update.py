@@ -14,11 +14,11 @@ def callAll(*args):
 	endofline = startIndex + '.' + endofline
 	startIndex = startIndex + '.0'
 	imports(startIndex, endofline)
-	defs(startIndex, endofline)
+	puncs(startIndex, endofline)
 	for i in textConfig.defslist:
-		k = i
-		savedDefs(startIndex, endofline, k)
+		savedDefs(startIndex, endofline, i)
 	keyColor(startIndex, endofline)
+	dots(startIndex, endofline)
 	selfUpdate(startIndex, endofline)
 	updateComments(startIndex, endofline)
 	updateQuoteColors(startIndex, endofline)
@@ -117,6 +117,32 @@ def keyColor(startIndex, endofline):
 				endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
 			textPad.tag_add("keyColor", startIndex, endIndex) # add tag to k
 			textPad.tag_config("keyColor", foreground=cfg.colors['keyColor'])      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+
+def puncs(startIndex, endofline):
+	countVar = Tkinter.StringVar()
+	while True:
+		r = r'(\=|\=\=|\!\=|\<|\<\=|\>|\>\=|\+|\-|\*|\/|\\|\%|\*\*|\+\=|\-\=|\*\=|\/\=|\%\=|\^|\||\&|\~|\>\>|\<\<|\{|\}|\(|\)|\[|\]|\,|\.|\:|\;)'
+		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
+		if startIndex:
+			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
+			textPad.tag_add("puncolor", startIndex, endIndex) # add tag to k
+			textPad.tag_config("puncolor", foreground=cfg.colors['puncColor'])      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+			
+def dots(startIndex, endofline):
+	countVar = Tkinter.StringVar()
+	while True:
+		r = r'(\.(.*)\()'
+		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
+		if startIndex:
+			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
+			textPad.tag_add("dotColor", startIndex, endIndex) # add tag to k
+			textPad.tag_config("dotColor", foreground=cfg.colors['dotColor'])      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break

@@ -6,6 +6,7 @@ from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 import tkFileDialog
 import tkMessageBox
 import sys
+import config
 	
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
@@ -25,7 +26,7 @@ displayfont = tkFont.Font(family = "Ubuntu Mono", size = 12)
 
 lnText = Text(root,
 			  background = "black",
-			  foreground = "white",
+			  foreground = config.colors["numLineColor"],
 			  insertbackground = "white",
 			  highlightthickness = 0,
 			  width = 4,
@@ -45,7 +46,7 @@ xscrollbar.grid(row=1)
 
 textPad = Text(root,
 					  background = "black",
-					  foreground = "white",
+					  foreground = config.colors['foregroundColor'],
 					  insertbackground = "white",
 					  font = customFont,
 					  undo = True,

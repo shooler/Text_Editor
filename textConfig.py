@@ -11,15 +11,16 @@ defslist = []
 
 
 def callAll(*args):
-	variables()
 	imports()
 	defs()
 	savedDefs()
 	keyColor()
+	puncs()
+	dots()
 	selfUpdate()
 	updateComments()
 	updateQuoteColors()
-
+	
 def updateQuoteColors():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
@@ -110,26 +111,6 @@ def imports():
 			break
 
 
-def variables():
-	countVar = Tkinter.StringVar()
-	startIndex = '1.0'
-	r = r'(([a-zA-Z]+\s?)|([a-zA-Z]+\s?)(?![==])([a-zA-Z]+\s?)(?=[=]|[+=]|[-=])(?:\\n)?|([a-zA-Z]+\s*)(?=[.]|[=]))'
-	while True:
-		startIndex = textPad.search(r, startIndex, END, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			variable = textPad.get(startIndex, endIndex).strip()
-			for x in ["if", "in", "for", "define", "\n"]:
-				variable = re.sub("^(?:if|in|for)$", '', variable)
-				variable = re.sub("\\n(.*)", '', variable)
-			if ' ' in variable:
-				variable = re.sub("(.*)\s", '', variable)
-			textPad.tag_add("vartag", startIndex, endIndex)
-			textPad.tag_config("vartag", foreground = cfg.colors['varColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-
 def keyColor():
 	'''the highlight function, called when a Key-press event occurs'''
 	startIndex = '1.0'
@@ -139,11 +120,39 @@ def keyColor():
 		startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
-			if '(' in textPad.get(startIndex, END):
-				endIndex = textPad.index('%s+%sc' % (startIndex, (str(int(countVar.get())-1)))) # find end of k
+			endIndex = textPad.index('%s+%sc' % (startIndex, (str(int(countVar.get()))))) # find end of k
 			textPad.tag_add("keyColor", startIndex, endIndex) # add tag to k
 			textPad.tag_config("keyColor", foreground=cfg.colors['keyColor'])      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
 		else:
 			break
 			
+def puncs():
+	'''the highlight function, called when a Key-press event occurs'''
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		r = r'(\=|\=\=|\!\=|\<|\<\=|\>|\>\=|\+|\-|\*|\/|\\|\%|\*\*|\+\=|\-\=|\*\=|\/\=|\%\=|\^|\||\&|\~|\>\>|\<\<|\{|\}|\(|\)|\[|\]|\,|\.|\:|\;)'
+		startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
+		if startIndex:
+			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
+			textPad.tag_add("puncolor", startIndex, endIndex) # add tag to k
+			textPad.tag_config("puncolor", foreground=cfg.colors['puncColor'])      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
+
+def dots():
+	'''the highlight function, called when a Key-press event occurs'''
+	countVar = Tkinter.StringVar()
+	startIndex = '1.0'
+	while True:
+		r = r'(\.(.*)\()'
+		startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
+		if startIndex:
+			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
+			textPad.tag_add("dotColor", startIndex, endIndex) # add tag to k
+			textPad.tag_config("dotColor", foreground=cfg.colors['dotColor'])      # and color it with v
+			startIndex = endIndex # reset startIndex to continue searching
+		else:
+			break
