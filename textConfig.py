@@ -25,12 +25,15 @@ def updateQuoteColors():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r"['\"](.*)['\"]", startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search("r('|\")[^\"']*('|\")", startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			textPad.tag_add("searchquotes", startIndex, endIndex)
-			textPad.tag_config("searchquotes", foreground = cfg.colors['quoteColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
+			textPad.tag_config("searchquotes", foreground = cfg.colors['quoteColor']) 
+			nextIndex = str(int(endIndex.split('.')[1])+1)
+			slist = startIndex.split('.')
+			slist[1] = nextIndex
+			startIndex = ('.').join(slist)# and color it with v
 		else:
 			break
 			
@@ -38,7 +41,7 @@ def updateComments():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r"[^\"](?:#)(.*)", startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search("[^\"](?:#)(.*)", startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			textPad.tag_add("comments", startIndex, endIndex)
@@ -70,7 +73,7 @@ def savedDefs():
  	countVar = Tkinter.StringVar()
  	for k in defslist:
  		startIndex = '1.0'
- 		r = r'(' + k + '\(\))'
+ 		r = '(' + k + '\(\))'
  		while True:
  			startIndex = textPad.search(r, startIndex, END, count=countVar, regexp=True)
  			if startIndex:
@@ -86,7 +89,7 @@ def selfUpdate():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'self[\.]|self[\(]', startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search('self[\.]|self[\(]', startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex)
@@ -100,7 +103,7 @@ def imports():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		startIndex = textPad.search(r'(?:import\s.*)(?=$)', startIndex, END, count=countVar, regexp=True)
+		startIndex = textPad.search('(?:import\s.*)(?=$)', startIndex, END, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex)
@@ -116,7 +119,7 @@ def keyColor():
 	startIndex = '1.0'
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(if\s|elif\s|else\s|def\s|import\s|global\s|len(?:\()|for\s|and\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|while\s|in\s|lambda\s|not\s)'
+		r = '(if\s|elif\s|else\s|def\s|import\s|global\s|len(?:\()|for\s|and\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|while\s|in\s|lambda\s|not\s)'
 		startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -132,7 +135,7 @@ def puncs():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		r = r'(\=|\=\=|\!\=|\<|\<\=|\>|\>\=|\+|\-|\*|\/|\\|\%|\*\*|\+\=|\-\=|\*\=|\/\=|\%\=|\^|\||\&|\~|\>\>|\<\<|\{|\}|\(|\)|\[|\]|\,|\.|\:|\;)'
+		r = '(\=|\=\=|\!\=|\<|\<\=|\>|\>\=|\+|\-|\*|\/|\\|\%|\*\*|\+\=|\-\=|\*\=|\/\=|\%\=|\^|\||\&|\~|\>\>|\<\<|\{|\}|\(|\)|\[|\]|\,|\.|\:|\;)'
 		startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -147,7 +150,7 @@ def dots():
 	countVar = Tkinter.StringVar()
 	startIndex = '1.0'
 	while True:
-		r = r'(\.(.*)\()'
+		r = '(\.(.*)\()'
 		startIndex = textPad.search(r, startIndex, END, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))

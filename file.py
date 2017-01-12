@@ -8,7 +8,7 @@ from main import *
 from textConfig import *
 from windows import *
 
-
+openedFiles = []
 tc = textConfig.callAll
 master = windows.root
 filename = ""

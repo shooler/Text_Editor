@@ -40,7 +40,7 @@ class main(object):
 			filemenu.add_command(label="New", command=file.new_file)
 			filemenu.add_command(label="Open", command=lambda: file.open_file(''))
 			filemenu.add_command(label="Save", command=file.save_file)
-			filemenu.add_command(label="Tab", command=tabs.tab)
+			filemenu.add_command(label="Tab", command=windows.newTab)
 			filemenu.add_separator()
 			filemenu.add_command(label="Exit", command=file.exit)
 			
@@ -63,32 +63,32 @@ class main(object):
 			helpmenu.add_command(label="About...", command=self.about)
 			
 			#adding some General keybindings
-			textPad.bind("<KeyRelease-Return>", self.lineNumbers)
-			textPad.bind("<KeyRelease-BackSpace>", self.lineNumbers)
-			textPad.bind("<Up>", self.scrollup)
-			textPad.bind("<Down>", self.scrolldn)
-			textPad.bind("<Button-1>", self.clickline)
-			textPad.bind("<Control-o>", file.open_file)
-			textPad.bind("<Control-s>", file.save_file)
-			textPad.bind("<Control-q>", file.exit)
-			textPad.bind("<Shift-MouseWheel>", windows.on_horizontal)
+			master.bind("<KeyRelease-Return>", windows.lineNumbers)
+			master.bind("<KeyRelease-BackSpace>", windows.lineNumbers)
+			master.bind("<Up>", self.scrollup)
+			master.bind("<Down>", self.scrolldn)
+			master.bind("<Control-o>", file.open_file)
+			master.bind("<Control-s>", file.save_file)
+			master.bind("<Control-q>", file.exit)
+			master.bind("<Shift-MouseWheel>", windows.on_horizontal)
 			
 			#Utility (non file keybinds)
-			textPad.bind("<Control-Key-l>", ukeys.newLine)
-			textPad.bind("<Control-KP_Add>", ukeys.zoom_in)
-			textPad.bind("<Control-KP_Subtract>", ukeys.zoom_out)
-			textPad.bind("<Control-Key-comma>", ukeys.backTab)
-			textPad.bind("<Control-Key-period>", ukeys.forwardTab)
-			textPad.bind("<Control-Key-f>", ukeys.searchInit)
-			textPad.bind("<Key-F1>", ukeys.getIndex)
+			master.bind("<Control-n>", windows.newTab)
+			master.bind("<Control-Key-l>", ukeys.newLine)
+			master.bind("<Control-KP_Add>", ukeys.zoom_in)
+			master.bind("<Control-KP_Subtract>", ukeys.zoom_out)
+			master.bind("<Control-Key-comma>", ukeys.backTab)
+			master.bind("<Control-Key-period>", ukeys.forwardTab)
+			master.bind("<Control-Key-f>", ukeys.searchInit)
+			master.bind("<Key-F1>", ukeys.getIndex)
 			searchDiag.bind("<Down>", ukeys.searchNext)
 			searchDiag.bind("<KeyRelease-Down>", self.scrolldn)
 			searchDiag.bind("<Up>", ukeys.searchLast)
 			searchDiag.bind("<KeyRelease-Up>", self.scrolldn)
-			searchDiag.bind("<KeyRelease-f>", ukeys.searchClear)
 			searchDiag.bind("<Return>", ukeys.searchReturn)
 			searchDiag.bind_all("<Escape>", ukeys.doneSearch)
 			#end keybinds
+			self.master.after(0, windows.currentTab())
 			self.master.mainloop()
 			
 	def toggleDevColors(self,*args):
@@ -107,12 +107,6 @@ class main(object):
 			textPad.bind("<KeyRelease-Down>", self.upd)
 			textPad.bind("<KeyRelease-Up>", self.upd)
 		
-			
-		
-	def clickline(self, dummy):
-		textPad.mark_set("insert", CURRENT)
-		i = textPad.index(Tkinter.INSERT)
-		lnText.see(i)
 		
 	def doublecall(self, x):
 		self.increment()
@@ -127,24 +121,6 @@ class main(object):
 			x.entryconfigure(3, label = "Resize: On")
 		else:
 			x.entryconfigure(3, label = "Resize: Off")
-						
-	def lineNumbers(self, *args):
-		#textPad.after(75, self.lineNumbers)
-		lnText.delete(1.0, END)
-		i = int(textPad.index(END).split('.')[0])
-		x = int(lnText.index('insert').split('.')[1])
-		current = textPad.index('insert')
-		clist = current.split('.')
-		nextline = str(int(clist[0]) + 1)
-		current = '.'.join(clist)
-		for x in range(i-1):
-			if x == 0:
-				lnText.insert("insert", str(int(x+1)))
-			else:
-				lnText.insert("insert", '\n' + str(int(x+1)))
-		textPad.mark_set("insert", (current))
-		lnText.see(current)
-		textPad.see(current)
 		
 	#Track scrolling on arrowdown (line numbers will now correspond with actual lines)
 	def scrolldn(self, thing):

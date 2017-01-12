@@ -26,7 +26,7 @@ def callAll(*args):
 def updateQuoteColors(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		startIndex = textPad.search(r"['\"](.*)['\"]", startIndex, endofline, count=countVar, regexp=True)
+		startIndex = textPad.search(r"r('|\")[^\"']*('|\")", startIndex, endofline, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			textPad.tag_add("searchquotes", startIndex, endIndex)
