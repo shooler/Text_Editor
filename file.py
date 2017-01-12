@@ -1,19 +1,18 @@
 import main
 import windows
-import textConfig
 import Tkinter
 import tkFileDialog as fd
 import os
 from main import *
-from textConfig import *
 from windows import *
 
 openedFiles = []
-tc = textConfig.callAll
+tc = windows.callOnce
 master = windows.root
 filename = ""
 
 def open_file(*arg):
+	textPad = windows.textPad
 	global filename
 	file = fd.askopenfile(parent=master,mode='rb',title='Select a file')
 	filename = str(file) 		#next few lines convert askopenfile object to readable filepath

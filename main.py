@@ -10,7 +10,6 @@ import ttk
 import config
 import utilityKeys
 import itertools
-import update
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
@@ -94,14 +93,14 @@ class main(object):
 	def toggleDevColors(self,*args):
 		for tag in textPad.tag_names():
 			textPad.tag_delete(tag)
-		if self.upd == update.callAll:
+		if self.upd == windows.callAll:
 			self.upd = self.dummy
 			textPad.bind("<KeyRelease-space>", self.dummy)
 			textPad.bind("<Return>", self.dummy)
 			textPad.bind("<KeyRelease-Down>", self.dummy)
 			textPad.bind("<KeyRelease-Up>", self.dummy)
 		else:
-			self.upd = update.callAll
+			self.upd = windows.callAll
 			textPad.bind("<KeyRelease-space>", self.upd)
 			textPad.bind("<Return>", self.upd)
 			textPad.bind("<KeyRelease-Down>", self.upd)
