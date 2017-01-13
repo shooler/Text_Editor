@@ -14,7 +14,8 @@ import config
 cfg = config
 defslist = []
 tabs = {}
-frameName = 1
+frameName = 'Tab'
+tabcount = 0
 
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
@@ -62,10 +63,14 @@ def lineNumbers(self, *args):
 
 def newTab(*args):
 	global frameName
-	frameName = frameName + 1
-	tabName = "New Tab"
+	global tabCount
 	if '/' in args[0]:
 		tabName = args[0].split('/')[-1]
+		frameName = '_=_' + tabName
+	else:
+		tabcount += 1
+		frameName = frameName + str(tabcount)
+		tabName = "New Tab"
 	frame = ttk.Frame(n, name = str(frameName))
 	n.add(frame, text=tabName)
 	n.select(frame)
@@ -163,7 +168,7 @@ def on_horizontal(event):
 	canvas.xview_scroll(-1 * -event.delta, 'units')
 	
 
-
+# START REGEX FOR COLORING
 def callAll(*args):
 	startIndex, endofline = textPad.index("insert").split('.')
 	endofline = startIndex + '.' + endofline

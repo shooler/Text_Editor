@@ -1,7 +1,0 @@
-Save State
-
-set wordwrap on and off
-
-Set up about shortcuts
-
-Tabs

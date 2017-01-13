@@ -6,7 +6,7 @@ import os
 from main import *
 from windows import *
 
-openedFiles = []
+openedFiles = {}
 tc = windows.callOnce
 master = windows.root
 filename = ""
@@ -19,6 +19,8 @@ def open_file(*arg):
 	filename = flist[2]
 	filename = re.sub('[\'\",]', '', filename)
 	windows.newTab(filename)
+	filekey = (filename.split('/')[-1])
+	openedFiles.update({filekey : filename})
 	textPad = windows.textPad
 	lnText = windows.lnText
 	if file != None:
@@ -43,20 +45,29 @@ def save_file(x):
 			quicksave(filename)
 			
 def quicksave(filename):
+	print openedFiles
+	filename = openedFiles[n.select().split('_=_')[-1]]
+	textPad = windows.textPad
 	file = open(filename, 'w')
 	data = textPad.get('1.0', END+'-1c')
 	file.write(data)
 	file.close()
+	
 		
 def save_as():
 	global filename
 	file = fd.asksaveasfile(mode='w')
+	filename = str(file) 		#next few lines convert askopenfile object to readable filepath
+	flist = filename.split(' ') #this allows us to save without the dialog if the file already exists
+	filename = flist[2]
+	filename = re.sub('[\'\",]', '', filename)
+	filekey = (filename.split('/')[-1])
+	openedFiles.update({filekey : filename})
 	if file != None:
 		#slice off the last character from get, as an extra return is added
 		data = textPad.get('1.0', END+'-1c')
 		file.write(data)
 		file.close()
-		filename = fd.askopenfilename()
 
 def exit(*arg):
 	if tkMessageBox.askokcancel("Quit", "Quit?"):
