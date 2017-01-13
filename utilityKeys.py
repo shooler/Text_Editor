@@ -51,21 +51,6 @@ def newLine(dummy):
 		textPad.mark_set("insert", lineinsert) #change the insertion marker location to end of line
 		textPad.mark_gravity("insert",RIGHT)#set gravity so it inserts to the right of line
 		textPad.insert("insert", "\n")
-		"""
-		new = lnText.get(1.0, END)
-		lineNumbers(i, new)
-		"""
-"""
-def lineNumbers(i, lineList):
-			ilist=i.split('.', 1)
-			lnText.see(i)
-			insert = str(int(ilist[0]) + 1)
-			lnText.mark_set("insert", insert + '.0')
-			if i not in lineList: 
-				#this keeps the program from adding already existing line numbers
-				lnText.insert("insert", insert + "\n")
-				lnText.update()
-"""
 #Next massive block dedicated to searching
 
 #bound to Ctrl - f

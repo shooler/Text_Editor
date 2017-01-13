@@ -18,8 +18,8 @@ def open_file(*arg):
 	flist = filename.split(' ') #this allows us to save without the dialog if the file already exists
 	filename = flist[2]
 	filename = re.sub('[\'\",]', '', filename)
-	windows.newTab(filename)
-	filekey = (filename.split('/')[-1])
+	filekey = (filename.split('/')[-1]).lower().split('.')[0].lower()
+	windows.newTab(filename, filekey)
 	openedFiles.update({filekey : filename})
 	textPad = windows.textPad
 	lnText = windows.lnText
@@ -36,6 +36,7 @@ def open_file(*arg):
 	textPad.see("1.0")
 	lnText.see("1.0")
 	tc()
+	return "break"
 
 def save_file(x):
 		global filename

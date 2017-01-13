@@ -53,25 +53,26 @@ style.map('ButtonNotebook.Tab',background=
 def lineNumbers(self, *args):
 	startIndex = '2.0'
 	linecount = int(textPad.index("end-1c").split('.')[0])+1
-	tIndex = textPad.index("insert")
+	#tIndex = textPad.index("insert")
 	lnText.delete('2.0', END)
 	for i in range(linecount):
 		if i > 1:
 			lnText.insert("insert", str(i) + '\n')
-	lnText.see(tIndex)
-	textPad.see(tIndex)
+	#lnText.see(tIndex)
+	#textPad.see(tIndex)
 
 def newTab(*args):
 	global frameName
 	global tabCount
 	if '/' in args[0]:
 		tabName = args[0].split('/')[-1]
-		frameName = '_=_' + tabName
+		frameName = '_=_' + tabName.split('.')[0].lower()
+		#frameName = '_=_' + tabName
 	else:
 		tabcount += 1
 		frameName = frameName + str(tabcount)
 		tabName = "New Tab"
-	frame = ttk.Frame(n, name = str(frameName))
+	frame = ttk.Frame(n, name = frameName)
 	n.add(frame, text=tabName)
 	n.select(frame)
 	scrollbar = Scrollbar(frame)
@@ -126,6 +127,8 @@ def currentTab(*args):
 	textPad.bind("<Return>", callAll)
 	textPad.bind("<KeyRelease-Down>", callAll)
 	textPad.bind("<KeyRelease-Up>", callAll)
+	textPad.bind("<KeyRelease-Return>", lineNumbers)
+	textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
 
 def resizeMe(x):
 	if x %2 == 0:

@@ -30,6 +30,8 @@ class main(object):
 			self.res = 0
 			self.tabcount = 0
 			self.toggleDevColors()
+			textPad = windows.textPad
+			searchDiag = windows.searchDiag
 			
 			
 			menu = Menu(master)
@@ -62,10 +64,10 @@ class main(object):
 			helpmenu.add_command(label="About...", command=self.about)
 			
 			#adding some General keybindings
-			master.bind("<KeyRelease-Return>", windows.lineNumbers)
-			master.bind("<KeyRelease-BackSpace>", windows.lineNumbers)
-			master.bind("<Up>", self.scrollup)
-			master.bind("<Down>", self.scrolldn)
+			textPad.bind("<KeyRelease-Return>", windows.lineNumbers)
+			textPad.bind("<KeyRelease-BackSpace>", windows.lineNumbers)
+			textPad.bind("<Up>", self.scrollup)
+			textPad.bind("<Down>", self.scrolldn)
 			master.bind("<Control-o>", file.open_file)
 			master.bind("<Control-s>", file.save_file)
 			master.bind("<Control-q>", file.exit)
@@ -89,6 +91,7 @@ class main(object):
 			#end keybinds
 			self.master.after(0, windows.currentTab())
 			self.master.mainloop()
+			
 			
 	def toggleDevColors(self,*args):
 		for tag in textPad.tag_names():
