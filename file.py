@@ -12,13 +12,15 @@ master = windows.root
 filename = ""
 
 def open_file(*arg):
-	textPad = windows.textPad
 	global filename
 	file = fd.askopenfile(parent=master,mode='rb',title='Select a file')
 	filename = str(file) 		#next few lines convert askopenfile object to readable filepath
 	flist = filename.split(' ') #this allows us to save without the dialog if the file already exists
 	filename = flist[2]
 	filename = re.sub('[\'\",]', '', filename)
+	windows.newTab(filename)
+	textPad = windows.textPad
+	lnText = windows.lnText
 	if file != None:
 		contents = file.read()
 		textPad.delete(1.0,"end-1c")
@@ -55,11 +57,6 @@ def save_as():
 		file.write(data)
 		file.close()
 		filename = fd.askopenfilename()
-			
-def new_file():
-	if tkMessageBox.askokcancel("New", "Do you want to save before you close?"):
-		save_file()
-		textPad.delete(1.0,END)
 
 def exit(*arg):
 	if tkMessageBox.askokcancel("Quit", "Quit?"):

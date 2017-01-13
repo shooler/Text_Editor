@@ -36,7 +36,7 @@ class main(object):
 			master.config(menu=menu)
 			filemenu = Menu(menu, tearoff=0)
 			menu.add_cascade(label="File", menu=filemenu)
-			filemenu.add_command(label="New", command=file.new_file)
+			filemenu.add_command(label="New", command=windows.newTab)
 			filemenu.add_command(label="Open", command=lambda: file.open_file(''))
 			filemenu.add_command(label="Save", command=file.save_file)
 			filemenu.add_command(label="Tab", command=windows.newTab)
@@ -149,7 +149,6 @@ class main(object):
 
 	def dummy(self, *args):
 		return
-		
 		
 class popupWindow(object):
 	def __init__(self,master):

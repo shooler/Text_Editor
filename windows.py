@@ -10,6 +10,7 @@ import sys
 import os
 import config
 
+
 cfg = config
 defslist = []
 tabs = {}
@@ -61,9 +62,13 @@ def newTab(*args):
 	global frameName
 	frameName = frameName + 1
 	tabName = "New Tab"
+	if '/' in args[0]:
+		tabName = args[0].split('/')[-1]
 	frame = ttk.Frame(n, name = str(frameName))
 	n.add(frame, text=tabName)
 	n.select(frame)
+	scrollbar = Scrollbar(frame)
+	xscrollbar = Scrollbar(frame,  orient = HORIZONTAL, width=0)
 	textPad = Text(frame, name = 'textPad',
 						  background = "black",
 						  foreground = config.colors['foregroundColor'],
@@ -79,7 +84,6 @@ def newTab(*args):
 						  xscrollcommand = xscrollbar.set
 						  )
 	textPad.mark_set("insert", "1.0")
-	textPad.focus_set()
 	lnText = Text(frame, name = 'lnText',
 				  background = "black",
 				  foreground = config.colors["numLineColor"],
@@ -91,12 +95,13 @@ def newTab(*args):
 				  bd = 0,
 				  font = customFont,
 				 )
+	scrollbar.pack(side= RIGHT, fill = 'y')
 	lnText.insert(1.0, "1\n")
 	lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N+S+E+W)
 	textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 	scrollbar.pack(side= RIGHT, fill = 'y')
 	tabs.update({n.select() : [textPad, lnText]})
-	print n
+	currentTab()
 	
 	
 def currentTab(*args):
@@ -106,6 +111,10 @@ def currentTab(*args):
 	textPad = texts[0]
 	lnText = texts[1]
 	root.after(500, currentTab)
+	scrollbar['command'] = on_scrollbar
+	xscrollbar['command'] = textPad.xview
+	textPad['yscrollcommand'] = on_textscroll
+	lnText['yscrollcommand'] = on_textscroll
 	textPad.bind("<KeyRelease-space>", callAll)
 	textPad.bind("<Return>", callAll)
 	textPad.bind("<KeyRelease-Down>", callAll)
@@ -172,8 +181,7 @@ def callOnce(*args):
 	endofline = 'end'
 	imports(startIndex, endofline)
 	puncs(startIndex, endofline)
-	for i in defslist:
-		savedDefs(startIndex, endofline, i)
+	defs(startIndex, endofline)
 	keyColor(startIndex, endofline)
 	dots(startIndex, endofline)
 	selfUpdate(startIndex, endofline)
@@ -215,7 +223,7 @@ def defs(startIndex, endofline):
 			startIndex = '.'.join(slist)
 			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-4))) # find end of k
 			v = textPad.get(startIndex, endIndex)
-			if v not in textConfig.defslist:
+			if v not in defslist:
 				defslist.append(v)
 			textPad.tag_add("defs", startIndex, endIndex)
 			textPad.tag_config("defs", foreground = cfg.colors['defColor'])      # and color it with v
@@ -251,7 +259,7 @@ def selfUpdate(startIndex, endofline):
 def imports(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		startIndex = textPad.search(r'(?:import\s.*)(?=$)', startIndex, endofline, count=countVar, regexp=True)
+		startIndex = textPad.search('(?:import\s.*)(?=$)', startIndex, endofline, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			variable = textPad.get(startIndex, endIndex)
@@ -265,13 +273,12 @@ def keyColor(startIndex, endofline):
 	'''the highlight function, called when a Key-press event occurs'''
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(if\s|elif\s|else\s|def\s|import\s|global\s|len(?:\()|for\s|and\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|while\s|in\s|lambda\s|not\s)'
+		r = r'(\sif\s|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|\sfor\s|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
-			if '(' in textPad.get(startIndex, endofline):
+			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
+			if '(' in textPad.get(startIndex, endIndex):
 				endIndex = textPad.index('%s+%sc' % (startIndex, (str(int(countVar.get())-1)))) # find end of k
-			else:
-				endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
 			textPad.tag_add("keyColor", startIndex, endIndex) # add tag to k
 			textPad.tag_config("keyColor", foreground=cfg.colors['keyColor'])      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching
@@ -294,7 +301,7 @@ def puncs(startIndex, endofline):
 def dots(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(\.(.*)\()'
+		r = '(\.[^(\"\']*)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -373,9 +380,3 @@ lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N
 textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 scrollbar.pack(side= RIGHT, fill = 'y')
 searchDiag.grid_forget()#hides the search bar(default)
-
-# Changing the settings to make the scrolling work
-scrollbar['command'] = on_scrollbar
-xscrollbar['command'] = textPad.xview
-textPad['yscrollcommand'] = on_textscroll
-lnText['yscrollcommand'] = on_textscroll
