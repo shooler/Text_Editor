@@ -45,7 +45,9 @@ style.layout("ButtonNotebook.Tab", [
 		})]
 	})]
 )
-style.configure("ButtonNotebook.Tab",width = 10)
+style.configure("ButtonNotebook.Tab",width = 10, selected = "light blue")
+style.map('ButtonNotebook.Tab',background=
+    [('selected', "slate gray"), ('active', "dark slate gray")])
 
 def lineNumbers(self, *args):
 	startIndex = '2.0'
