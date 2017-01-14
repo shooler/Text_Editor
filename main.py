@@ -20,6 +20,7 @@ from tabs import *
 ukeys = utilityKeys
 customfont = windows.customFont
 mast = windows.root
+searches = windows.searches
 
 class main(object):
 	def __init__(self,master):
@@ -80,14 +81,8 @@ class main(object):
 			master.bind("<Control-KP_Subtract>", ukeys.zoom_out)
 			master.bind("<Control-Key-comma>", ukeys.backTab)
 			master.bind("<Control-Key-period>", ukeys.forwardTab)
-			master.bind("<Control-Key-f>", ukeys.searchInit)
+			master.bind("<Control-Key-f>", ukeys.searches.searchInit)
 			master.bind("<Key-F1>", ukeys.getIndex)
-			searchDiag.bind("<Down>", ukeys.searchNext)
-			searchDiag.bind("<KeyRelease-Down>", self.scrolldn)
-			searchDiag.bind("<Up>", ukeys.searchLast)
-			searchDiag.bind("<KeyRelease-Up>", self.scrolldn)
-			searchDiag.bind("<Return>", ukeys.searchReturn)
-			searchDiag.bind_all("<Escape>", ukeys.doneSearch)
 			#end keybinds
 			self.master.after(0, windows.currentTab())
 			self.master.mainloop()

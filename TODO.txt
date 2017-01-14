@@ -1,1 +1,20 @@
-TEST TEXT ADDED
+TODO:
+
+fix line numbers on new tabs
+
+make save update tab name
+
+ensure that enter doesnt add new lines to textpad when in a dialog
+
+comment coloring still needs work
+
+update ctrl i to work on new tabs
+
+disable dev colors not currently working,
+works temporarily on main window
+doesnt work at all on tabs
+
+best course of action is probably to refactor
+the currentTab function
+
+fix search function

@@ -9,6 +9,8 @@ import tkMessageBox
 import sys
 import os
 import config
+import utilityKeys
+
 
 
 cfg = config
@@ -16,6 +18,14 @@ defslist = []
 tabs = {}
 frameName = 'Tab'
 tabcount = 0
+tab = "\n"
+spacetab = "    "
+tablength = 1
+searchStartIndex = 0
+searchindex = 0
+searchtext = ''
+searchList = []
+
 
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
@@ -51,15 +61,14 @@ style.map('ButtonNotebook.Tab',background=
     [('selected', "slate gray"), ('active', "dark slate gray")])
 
 def lineNumbers(self, *args):
-	startIndex = '2.0'
-	linecount = int(textPad.index("end-1c").split('.')[0])+1
-	#tIndex = textPad.index("insert")
-	lnText.delete('2.0', END)
-	for i in range(linecount):
-		if i > 1:
-			lnText.insert("insert", str(i) + '\n')
-	#lnText.see(tIndex)
-	#textPad.see(tIndex)
+	lnText.delete(1.0, "end-1c")
+	i = int(textPad.index('end-1c').split('.')[0])
+	for x in range(i):
+		lnText.config(state = 'normal')
+		if x != 0:
+			lnText.insert("insert", '\n' + str(int(x+1)))
+		else:
+			lnText.insert("insert", str(int(x+1)))
 
 def newTab(*args):
 	global frameName
@@ -67,7 +76,6 @@ def newTab(*args):
 	if '/' in args[0]:
 		tabName = args[0].split('/')[-1]
 		frameName = '_=_' + tabName.split('.')[0].lower()
-		#frameName = '_=_' + tabName
 	else:
 		tabcount += 1
 		frameName = frameName + str(tabcount)
@@ -98,13 +106,15 @@ def newTab(*args):
 				  insertbackground = "white",
 				  highlightthickness = 0,
 				  width = 4,
-				  padx = 0,
+				  padx = 3,
+				  wrap = 'none',
 				  pady = 0,
 				  bd = 0,
 				  font = customFont,
+				  state = 'disabled'
 				 )
 	scrollbar.pack(side= RIGHT, fill = 'y')
-	lnText.insert(1.0, "1\n")
+	lnText.insert('1.0', "1")
 	lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N+S+E+W)
 	textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 	scrollbar.pack(side= RIGHT, fill = 'y')
@@ -129,6 +139,10 @@ def currentTab(*args):
 	textPad.bind("<KeyRelease-Up>", callAll)
 	textPad.bind("<KeyRelease-Return>", lineNumbers)
 	textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
+	searchDiag.bind("<Down>", searches.searchNext)
+	searchDiag.bind("<Up>", searches.searchLast)
+	searchDiag.bind("<Return>", searches.searchReturn)
+	searchDiag.bind_all("<Escape>", searches.doneSearch)
 
 def resizeMe(x):
 	if x %2 == 0:
@@ -155,6 +169,7 @@ def btn_press(event):
 	if "close" in elem:
 		widget.state(['pressed'])
 		widget.pressed_index = index
+	searches = utilityKeys.searches(textPad, lnText, searchDiag)
 def btn_release(event):
 	x, y, widget = event.x, event.y, event.widget
 	if not widget.instate(['pressed']):
@@ -164,6 +179,8 @@ def btn_release(event):
 	if "close" in elem and widget.pressed_index == index:
 		widget.forget(index)
 		widget.event_generate("<<NotebookClosedTab>>")
+		currentTab()
+		searches = utilityKeys.searches(textPad, lnText, searchDiag)
 	widget.state(["!pressed"])
 	widget.pressed_index = None
 
@@ -173,25 +190,18 @@ def on_horizontal(event):
 
 # START REGEX FOR COLORING
 def callAll(*args):
-	startIndex, endofline = textPad.index("insert").split('.')
-	endofline = startIndex + '.' + endofline
-	startIndex = startIndex + '.0'
+	if'/' in args[0]:
+		startIndex = '1.0'
+		endofline = 'end'
+		defs(startIndex, endofline)
+	else:
+		startIndex, endofline = textPad.index("insert").split('.')
+		endofline = startIndex + '.' + endofline
+		startIndex = startIndex + '.0'
+		for i in defslist:
+			savedDefs(startIndex, endofline, i)
 	imports(startIndex, endofline)
 	puncs(startIndex, endofline)
-	for i in defslist:
-		savedDefs(startIndex, endofline, i)
-	keyColor(startIndex, endofline)
-	dots(startIndex, endofline)
-	selfUpdate(startIndex, endofline)
-	updateComments(startIndex, endofline)
-	updateQuoteColors(startIndex, endofline)
-	
-def callOnce(*args):
-	startIndex = '1.0'
-	endofline = 'end'
-	imports(startIndex, endofline)
-	puncs(startIndex, endofline)
-	defs(startIndex, endofline)
 	keyColor(startIndex, endofline)
 	dots(startIndex, endofline)
 	selfUpdate(startIndex, endofline)
@@ -283,7 +293,7 @@ def keyColor(startIndex, endofline):
 	'''the highlight function, called when a Key-press event occurs'''
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(\sif\s|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|\sfor\s|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s)'
+		r = r'(\sif\s|\sNone|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|\sfor\s|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -321,7 +331,6 @@ def dots(startIndex, endofline):
 		else:
 			break
 			
-	
 root.bind_class("TNotebook", "<ButtonPress-1>", btn_press, True)
 root.bind_class("TNotebook", "<ButtonRelease-1>", btn_release)
 
@@ -357,10 +366,12 @@ lnTex = Text(frame, name = 'lnText',
 			  insertbackground = "white",
 			  highlightthickness = 0,
 			  width = 4,
-			  padx = 0,
+			  padx = 3,
+			  wrap = 'none',
 			  pady = 0,
 			  bd = 0,
 			  font = customFont,
+			  state = 'disabled'
 			 )
 lnTex.insert(1.0, "1\n")
 	
@@ -390,3 +401,5 @@ lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N
 textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 scrollbar.pack(side= RIGHT, fill = 'y')
 searchDiag.grid_forget()#hides the search bar(default)
+
+searches = utilityKeys.searches(textPad, lnText, searchDiag)

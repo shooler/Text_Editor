@@ -1,8 +1,6 @@
 import Tkinter
 import tkFileDialog
 import tkMessageBox
-import windows
-from windows import *
 from Tkinter import *
 from ScrolledText import * 
 
@@ -10,18 +8,13 @@ from ScrolledText import *
 tab = "\n"
 spacetab = "    "
 tablength = 1
-searchStartIndex = 0
-searchindex = 0
-searchtext = ''
-
 #function/attribute imports
-textPad = windows.textPad
-lnText = windows.lnText
-customfont = windows.customFont
-searchDiag = windows.searchDiag
+
+#customfont = windows.customFont
+#searchDiag = windows.searchDiag
 #imports
 
-searchList = []
+
 
 def getIndex(dummy):
 	print textPad.index(Tkinter.INSERT)
@@ -51,92 +44,98 @@ def newLine(dummy):
 		textPad.mark_set("insert", lineinsert) #change the insertion marker location to end of line
 		textPad.mark_gravity("insert",RIGHT)#set gravity so it inserts to the right of line
 		textPad.insert("insert", "\n")
-#Next massive block dedicated to searching
-
-#bound to Ctrl - f
-def searchInit(*args):
-	searchDiag.grid(row=2, columnspan=2) 
-	searchDiag.focus_set() # sets focus to the search bar at the bottom
-	
-def searchClear(*args):
-	searchDiag.delete("1.0", END)
-	
-#bound to esc
-def doneSearch(*args):#on pressing escape, resets search bar to defaults
-	global searchStartIndex
-	global searchIndex
-	global searchtext
-	searchDiag.grid_forget()#hides the search bar
-	searchClear()
-	textPad.focus_set()
-	textPad.tag_delete("searchMatch")
-	searchStartIndex = 0
-	searchindex = 0
-	searchtext = ''
+#Next massive block dedicated to searching-----------------------------
 	
 #bound to enter
-def searchReturn(*args):#pressing enter initializes the list of indexes for the search
-	global searchStartIndex
-	global searchList
-	global searchtext
-	searchtext = searchDiag.get('1.0', "end-1c")
-	text = searchtext
-	searchClear()
-	startIndex = '1.0'
-	while True:
-		startIndex = textPad.search(text, startIndex, "end-1c")
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, len(text))) # find end of k
-			searchList.append(startIndex)
-			startIndex = endIndex # reset startIndex to continue searching
-			searchNext()
-			
-#bound to Down
-def searchNext(*args):					#Iterates forwards through the list
-	global searchindex					#if the tag is detected in the program it is deleted
-	global searchtext					#after that however, a new tag is made at the current
-	global searchStartIndex				#search index, which will be deleted upon calling for the
-	searchindex = searchindex + 1		#next search index
-	if searchStartIndex == 0:			#this will work between both forward and backwards indexing
-		searchindex = 0
-		searchStartIndex += 1
-	if searchindex >= len(searchList):
-		searchindex = 0
-	if "searchMatch" in textPad.tag_names():
-		textPad.tag_delete("searchMatch")
-	startIndex = searchList[searchindex]
-	endIndex = textPad.index("%s + %sc" % (startIndex, len(searchtext)))
-	textPad.see(startIndex)
-	textPad.mark_set("insert", startIndex)
-	textPad.tag_add("searchMatch", startIndex, endIndex)
-	textPad.tag_config("searchMatch", background = "gray")
-	textPad.update()
-	searchClear()
-	searchDiag.insert("insert", "Match #: " + str(searchindex))
-	
-#bound to Up
-def searchLast(*args):				#Iterates backwards through the list
-	global searchindex
-	global searchtext
-	global searchStartIndex
-	if searchStartIndex == 0:
-		searchindex = len(searchList)
-		searchStartIndex += 1
-	searchindex = searchindex - 1
-	if searchindex < 0:
-		searchindex = len(searchList) - 1
-	if "searchMatch" in textPad.tag_names():
-		textPad.tag_delete("searchMatch")
-	startIndex = searchList[searchindex]
-	endIndex = textPad.index("%s + %sc" % (startIndex, len(searchtext)))
-	textPad.see(startIndex)
-	textPad.mark_set("insert", startIndex)
-	textPad.tag_add("searchMatch", startIndex, endIndex)
-	textPad.tag_config("searchMatch", background = "gray")
-	textPad.update()
-	searchClear()
-	searchDiag.insert("insert", "Match #: " + str(searchindex))
-	
+class searches(object):
+	@classmethod
+	def __init__(self, textPad, lnText, searchDiag):
+		self.searchStartIndex = 0
+		self.searchindex = 0
+		self.searchtext = ''
+		self.searchList = []
+		self.searchDiag = searchDiag
+		self.textPad = textPad
+		self.lnText = lnText
+
+		#bound to Ctrl - f
+	@classmethod
+	def searchInit(self, *args):
+		self.searchDiag.grid(row=2, columnspan=2) 
+		self.searchDiag.focus_set() # sets focus to the search bar at the bottom
+		print "Init Called"
+	@classmethod
+	def searchClear(self, *args):
+		self.searchDiag.delete("1.0", END)
+
+	@classmethod
+	#bound to esc
+	def doneSearch(self, *args):#on pressing escape, resets search bar to defaults
+		self.searchDiag.grid_forget()#hides the search bar
+		self.searchClear()
+		self.textPad.focus_set()
+		self.textPad.tag_delete("searchMatch")
+		self.searchStartIndex = 0
+		self.searchList = []
+		self.searchindex = 0
+		self.searchtext = ''
+		
+	@classmethod
+	def searchReturn(self, *args):#pressing enter initializes the list of indexes for the search
+		self.searchtext = self.searchDiag.get('1.0', "end-1c")
+		text = self.searchtext
+		self.searchClear()
+		startIndex = '1.0'
+		while True:
+			startIndex = self.textPad.search(text, startIndex, "end")
+			if startIndex:
+				endIndex = self.textPad.index("%s + %sc" % (startIndex, len(text))) # find end of k
+				self.searchList.append(startIndex)
+				startIndex = endIndex # reset startIndex to continue searching
+			else:
+				break
+	@classmethod
+	#bound to Down
+	def searchNext(self, *args):
+		self.searchindex = self.searchindex + 1		#Iterates forwards through the list
+		if self.searchStartIndex == 0:				#if the tag is detected in the program it is deleted
+			self.searchindex = 0					#after that however, a new tag is made at the current
+			self.searchStartIndex += 1				#search index, which will be deleted upon calling for the
+		if self.searchindex >= len(self.searchList):#next search index
+			self.searchindex = 0					#this will work between both forward and backwards indexing
+		if "searchMatch" in self.textPad.tag_names():
+			self.textPad.tag_delete("searchMatch")
+		startIndex = self.searchList[self.searchindex]
+		endIndex = self.textPad.index("%s + %sc" % (startIndex, len(self.searchtext)))
+		self.textPad.see(startIndex)
+		self.textPad.mark_set("insert", startIndex)
+		self.textPad.tag_add("searchMatch", startIndex, endIndex)
+		self.textPad.tag_config("searchMatch", background = "gray")
+		self.textPad.update()
+		self.searchClear()
+		self.searchDiag.insert("insert", "Match #: " + str(self.searchindex))
+
+	@classmethod
+	#bound to Up
+	def searchLast(self, *args):				#Iterates backwards through the list
+		if self.searchStartIndex == 0:
+			self.searchindex = len(self.searchList)
+			self.searchStartIndex += 1
+		self.searchindex = self.searchindex - 1
+		if self.searchindex < 0:
+			self.searchindex = len(self.searchList) - 1
+		if "searchMatch" in self.textPad.tag_names():
+			self.textPad.tag_delete("searchMatch")
+		startIndex = self.searchList[self.searchindex]
+		endIndex = textPad.index("%s + %sc" % (startIndex, len(self.searchtext)))
+		self.textPad.see(startIndex)
+		self.textPad.mark_set("insert", startIndex)
+		self.textPad.tag_add("searchMatch", startIndex, endIndex)
+		self.textPad.tag_config("searchMatch", background = "gray")
+		textPad.update()
+		self.searchClear()
+		self.searchDiag.insert("insert", "Match #: " + str(self.searchindex))
+
 #-----------------------END SEARCH DEDICATION------------------------------
 	
 #bound to Ctrl -

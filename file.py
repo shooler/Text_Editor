@@ -2,14 +2,16 @@ import main
 import windows
 import Tkinter
 import tkFileDialog as fd
+import utilityKeys as ukeys
 import os
 from main import *
 from windows import *
 
 openedFiles = {}
-tc = windows.callOnce
+updateColors = windows.callAll
 master = windows.root
 filename = ""
+
 
 def open_file(*arg):
 	global filename
@@ -25,17 +27,24 @@ def open_file(*arg):
 	lnText = windows.lnText
 	if file != None:
 		contents = file.read()
-		textPad.delete(1.0,"end-1c")
+		textPad.delete(1.0,"end")
 		textPad.insert('1.0', contents)
 		file.close()
 	#get line numbers
 	lnText.delete(1.0, "end-1c")
 	i = int(textPad.index('end-1c').split('.')[0])
-	for x in range(i+1):
-		lnText.insert("insert", str(int(x+1)) + '\n')
+	for x in range(i):
+		lnText.config(state = 'normal')
+		if x != 0:
+			lnText.insert("insert", '\n' + str(int(x+1)))
+		else:
+			lnText.insert("insert", str(int(x+1)))
+	#textPad.insert(END, "\n")
 	textPad.see("1.0")
 	lnText.see("1.0")
-	tc()
+	updateColors(filename)
+	lnText.config(state = 'disabled')
+	ukeys.searches(textPad, lnText, windows.searchDiag)
 	return "break"
 
 def save_file(x):
