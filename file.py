@@ -42,6 +42,7 @@ def open_file(*arg):
 	updateColors(filename)
 	lnText.config(state = 'disabled')
 	ukeys.searches(textPad, lnText, windows.searchDiag)
+	ukeys.utilities(textPad, windows.customFont)
 	return "break"
 
 def save_file(x):

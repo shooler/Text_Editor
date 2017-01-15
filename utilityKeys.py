@@ -7,36 +7,52 @@ from ScrolledText import *
 
 tab = "\n"
 spacetab = "    "
-tablength = 1
 
-def getIndex(dummy):
-	print textPad.index(Tkinter.INSERT)
+class utilities(object):
+	@classmethod
+	def __init__(self, textPad, customFont):
+		self.textPad = textPad
+		self.font = customFont
+		self.tablength = 1
+		
+	@classmethod
+	def backTab(self, *args):
+		i = self.textPad.index(Tkinter.INSERT).split('.')
+		self.textPad.delete(i[0] + '.0', i[0] + '.1')
+		returnTab = i[0] + '.' + str(int(i[1]) - self.tablength)
+		self.textPad.mark_set("insert", returnTab)
 
-def backTab(dummy):
-	global tablength
-	i = textPad.index(Tkinter.INSERT).split('.')
-	textPad.delete(i[0] + '.0', i[0] + '.1')
-	returnList = '.'.join(i)
-	returnTab = i[0] + '.' + str(int(i[1]) - tablength)
-	textPad.mark_set("insert", returnTab)
-	
-def forwardTab(dummy):
-	global tablength
-	i = textPad.index(Tkinter.INSERT).split('.')
-	textPad.mark_set("insert", i[0] + '.0')
-	textPad.insert("insert", "\t")
-	returnList = '.'.join(i)
-	returnTab = i[0] + '.' + str(int(i[1]) + tablength)
-	textPad.mark_set("insert", returnTab)
+	@classmethod
+	def forwardTab(self, *args):
+		i = self.textPad.index("insert").split('.')
+		self.textPad.mark_set("insert", i[0] + '.0')
+		self.textPad.insert("insert", "\t")
+		returnTab = i[0] + '.' + str(int(i[1]) + self.tablength)
+		self.textPad.mark_set("insert", returnTab)
+		
+	#bound to Ctrl l
+	@classmethod
+	def newLine(self, *args):
+			i = self.textPad.index("insert") # get index of current line "1.1" etc...
+			ilist=i.split('.')
+			lineinsert = str(ilist[0]) + '.end';
+			self.textPad.mark_set("insert", lineinsert) #change the insertion marker location to end of line
+			self.textPad.mark_gravity("insert",RIGHT)#set gravity so it inserts to the right of line
+			self.textPad.insert("insert", "\n")
+			
+	#bound to Ctrl -
+	#Zooms in on both frames
+	@classmethod
+	def zoom_in(self, *args):
+			size = self.font.actual()["size"]+2
+			self.font.configure(size=size)
 
-#bound to Ctrl l
-def newLine(dummy):
-		i = textPad.index("insert") # get index of current line "1.1" etc...
-		ilist=i.split('.')
-		lineinsert = str(ilist[0]) + '.end';
-		textPad.mark_set("insert", lineinsert) #change the insertion marker location to end of line
-		textPad.mark_gravity("insert",RIGHT)#set gravity so it inserts to the right of line
-		textPad.insert("insert", "\n")
+	#bound to Ctrl +
+	#Zooms out on both frames
+	@classmethod
+	def zoom_out(self, *args):
+			size = self.font.actual()["size"]-2
+			self.font.configure(size=max(size, 8))
 #Next massive block dedicated to searching-----------------------------
 	
 #bound to enter
@@ -135,17 +151,3 @@ class searches(object):
 		self.searchDiag.insert("insert", "Match #: " + str(self.searchindex))
 
 #-----------------------END SEARCH DEDICATION------------------------------
-	
-#bound to Ctrl -
-#Zooms in on both frames
-def zoom_in(dummy):
-		font = customfont
-		size = font.actual()["size"]+2
-		font.configure(size=size)
-		
-#bound to Ctrl +
-#Zooms out on both frames
-def zoom_out(dummy):
-		font = customfont
-		size = font.actual()["size"]-2
-		font.configure(size=max(size, 8))

@@ -146,6 +146,11 @@ def currentTab(*args):
 	searchDiag.bind("<Up>", searches.searchLast)
 	searchDiag.bind("<Return>", searches.searchReturn)
 	searchDiag.bind_all("<Escape>", searches.doneSearch)
+	textPad.bind("<Control-Key-l>", utilities.newLine)
+	textPad.bind("<Control-KP_Add>", utilities.zoom_in)
+	textPad.bind("<Control-KP_Subtract>", utilities.zoom_out)
+	textPad.bind("<Control-Key-comma>", utilities.backTab)
+	textPad.bind("<Control-Key-period>", utilities.forwardTab)
 
 def resizeMe(x):
 	if x %2 == 0:
@@ -173,6 +178,8 @@ def btn_press(event):
 		widget.state(['pressed'])
 		widget.pressed_index = index
 	searches = utilityKeys.searches(textPad, lnText, searchDiag)
+	utilities = utilityKeys.utilities(textPad, customFont)
+	
 def btn_release(event):
 	x, y, widget = event.x, event.y, event.widget
 	if not widget.instate(['pressed']):
@@ -183,6 +190,7 @@ def btn_release(event):
 		widget.forget(index)
 		widget.event_generate("<<NotebookClosedTab>>")
 		currentTab()
+		utilities = utilityKeys.utilities(textPad, customFont)
 		searches = utilityKeys.searches(textPad, lnText, searchDiag)
 	widget.state(["!pressed"])
 	widget.pressed_index = None
@@ -214,7 +222,7 @@ def callAll(*args):
 def updateQuoteColors(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		startIndex = textPad.search(r"('|\")[^\"']*('|\")", startIndex, endofline, count=countVar, regexp=True)
+		startIndex = textPad.search("('[^']*'|\"[^\"]*\")", startIndex, endofline, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			textPad.tag_add("searchquotes", startIndex, endIndex)
@@ -226,7 +234,7 @@ def updateQuoteColors(startIndex, endofline):
 def updateComments(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		startIndex = textPad.search(r"[^\"](?:#)(.*)", startIndex, endofline, count=countVar, regexp=True)
+		startIndex = textPad.search(r"(?![\"'])(?:#)(.*)(?![\"'])", startIndex, endofline, count=countVar, regexp=True)
 		if startIndex:
 			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
 			textPad.tag_add("comments", startIndex, endIndex)
@@ -296,7 +304,7 @@ def keyColor(startIndex, endofline):
 	'''the highlight function, called when a Key-press event occurs'''
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(\sif\s|\sNone|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|\sfor\s|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s|def\s)'
+		r = r'((?!\w)\d|\sif\s|\sNone|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|((\\h)*for\s)|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s|def\s)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -311,7 +319,7 @@ def keyColor(startIndex, endofline):
 def puncs(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(\=|\=\=|\!\=|\<|\<\=|\>|\>\=|\+|\-|\*|\/|\\|\%|\*\*|\+\=|\-\=|\*\=|\/\=|\%\=|\^|\||\&|\~|\>\>|\<\<|\{|\}|\(|\)|\[|\]|\,|\.|\:|\;)'
+		r = '(\\W)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -324,7 +332,7 @@ def puncs(startIndex, endofline):
 def dots(startIndex, endofline):
 	countVar = Tkinter.StringVar()
 	while True:
-		r = '(\.[^(\"\']*)'
+		r = '(\.(?![0-9])[^(\"\']*)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -407,3 +415,4 @@ scrollbar.pack(side= RIGHT, fill = 'y')
 searchDiag.grid_forget()#hides the search bar(default)
 
 searches = utilityKeys.searches(textPad, lnText, searchDiag)
+utilities = utilityKeys.utilities(textPad, customFont)

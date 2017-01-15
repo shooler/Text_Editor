@@ -72,23 +72,18 @@ class main(object):
 			
 			#Utility (non file keybinds)
 			master.bind("<Control-n>", windows.newTab)
-			master.bind("<Control-Key-l>", ukeys.newLine)
-			master.bind("<Control-KP_Add>", ukeys.zoom_in)
-			master.bind("<Control-KP_Subtract>", ukeys.zoom_out)
-			master.bind("<Control-Key-comma>", ukeys.backTab)
-			master.bind("<Control-Key-period>", ukeys.forwardTab)
 			master.bind("<Control-Key-f>", ukeys.searches.searchInit)
-			master.bind("<Key-F1>", ukeys.getIndex)
 			#end keybinds
 			self.master.after(0, windows.currentTab())
 			self.master.mainloop()
 			
 			
 	def toggleDevColors(self,*args):
-		for tag in textPad.tag_names():
-			textPad.tag_delete(tag)
+		for tag in windows.textPad.tag_names():
+			windows.textPad.tag_delete(tag)
 		if self.upd == windows.callAll:
 			self.upd = self.dummy
+			windows.callAll('/')
 			textPad.bind("<KeyRelease-space>", self.dummy)
 			textPad.bind("<Return>", self.dummy)
 			textPad.bind("<KeyRelease-Down>", self.dummy)
