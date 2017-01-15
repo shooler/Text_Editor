@@ -60,7 +60,9 @@ style.configure("ButtonNotebook.Tab",width = 10, selected = "light blue")
 style.map('ButtonNotebook.Tab',background=
     [('selected', "slate gray"), ('active', "dark slate gray")])
 
-def lineNumbers(self, *args):
+
+def lineNumbers(*args):
+	index = textPad.index("insert")
 	lnText.delete(1.0, "end-1c")
 	i = int(textPad.index('end-1c').split('.')[0])
 	for x in range(i):
@@ -69,7 +71,8 @@ def lineNumbers(self, *args):
 			lnText.insert("insert", '\n' + str(int(x+1)))
 		else:
 			lnText.insert("insert", str(int(x+1)))
-
+	lnText.see(index)
+			
 def newTab(*args):
 	global frameName
 	global tabCount
@@ -190,7 +193,7 @@ def on_horizontal(event):
 
 # START REGEX FOR COLORING
 def callAll(*args):
-	if'/' in args[0]:
+	if '/' in str(args[0]):
 		startIndex = '1.0'
 		endofline = 'end'
 		defs(startIndex, endofline)
@@ -293,7 +296,7 @@ def keyColor(startIndex, endofline):
 	'''the highlight function, called when a Key-press event occurs'''
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'(\sif\s|\sNone|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|\sfor\s|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s)'
+		r = r'(\sif\s|\sNone|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|\sfor\s|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s|def\s)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
 			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
@@ -371,9 +374,9 @@ lnTex = Text(frame, name = 'lnText',
 			  pady = 0,
 			  bd = 0,
 			  font = customFont,
-			  state = 'disabled'
-			 )
-lnTex.insert(1.0, "1\n")
+			  state = 'normal'
+			)
+lnTex.config(state = 'disabled')
 	
 searchDiag = Text(root,
 				  background = "white",
@@ -394,6 +397,7 @@ tabs.update({n.select() : [textPa, lnTex]})
 
 textPad = textPa
 lnText = lnTex
+lineNumbers()
 
 n.grid(row = 0, column = 0, rowspan = 1, columnspan = 3,sticky=N+S+E+W)
 searchDiag.grid(row = 1, columnspan = 2, sticky = E+W)

@@ -1,10 +1,5 @@
 TODO:
-
-fix line numbers on new tabs
-
 make save update tab name
-
-ensure that enter doesnt add new lines to textpad when in a dialog
 
 comment coloring still needs work
 
@@ -17,4 +12,4 @@ doesnt work at all on tabs
 best course of action is probably to refactor
 the currentTab function
 
-fix search function
+add ctrl-x with no selection cuts whole line(-\n)

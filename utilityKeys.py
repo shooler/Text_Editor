@@ -8,13 +8,6 @@ from ScrolledText import *
 tab = "\n"
 spacetab = "    "
 tablength = 1
-#function/attribute imports
-
-#customfont = windows.customFont
-#searchDiag = windows.searchDiag
-#imports
-
-
 
 def getIndex(dummy):
 	print textPad.index(Tkinter.INSERT)
@@ -63,7 +56,7 @@ class searches(object):
 	def searchInit(self, *args):
 		self.searchDiag.grid(row=2, columnspan=2) 
 		self.searchDiag.focus_set() # sets focus to the search bar at the bottom
-		print "Init Called"
+
 	@classmethod
 	def searchClear(self, *args):
 		self.searchDiag.delete("1.0", END)
@@ -84,6 +77,9 @@ class searches(object):
 	def searchReturn(self, *args):#pressing enter initializes the list of indexes for the search
 		self.searchtext = self.searchDiag.get('1.0', "end-1c")
 		text = self.searchtext
+		if text == '':
+				self.doneSearch()
+				return "break"
 		self.searchClear()
 		startIndex = '1.0'
 		while True:
@@ -94,6 +90,8 @@ class searches(object):
 				startIndex = endIndex # reset startIndex to continue searching
 			else:
 				break
+		self.searchNext()
+		
 	@classmethod
 	#bound to Down
 	def searchNext(self, *args):
@@ -127,12 +125,12 @@ class searches(object):
 		if "searchMatch" in self.textPad.tag_names():
 			self.textPad.tag_delete("searchMatch")
 		startIndex = self.searchList[self.searchindex]
-		endIndex = textPad.index("%s + %sc" % (startIndex, len(self.searchtext)))
+		endIndex = self.textPad.index("%s + %sc" % (startIndex, len(self.searchtext)))
 		self.textPad.see(startIndex)
 		self.textPad.mark_set("insert", startIndex)
 		self.textPad.tag_add("searchMatch", startIndex, endIndex)
 		self.textPad.tag_config("searchMatch", background = "gray")
-		textPad.update()
+		self.textPad.update()
 		self.searchClear()
 		self.searchDiag.insert("insert", "Match #: " + str(self.searchindex))
 

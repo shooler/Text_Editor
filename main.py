@@ -3,7 +3,6 @@ import font
 import tkFileDialog
 import tkMessageBox
 import sys
-import tabs
 import file
 import windows
 import ttk
@@ -14,7 +13,6 @@ from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
 from windows import *
-from tabs import *
 
 
 ukeys = utilityKeys
@@ -65,8 +63,6 @@ class main(object):
 			helpmenu.add_command(label="About...", command=self.about)
 			
 			#adding some General keybindings
-			textPad.bind("<KeyRelease-Return>", windows.lineNumbers)
-			textPad.bind("<KeyRelease-BackSpace>", windows.lineNumbers)
 			textPad.bind("<Up>", self.scrollup)
 			textPad.bind("<Down>", self.scrolldn)
 			master.bind("<Control-o>", file.open_file)
@@ -99,7 +95,7 @@ class main(object):
 			textPad.bind("<KeyRelease-Up>", self.dummy)
 		else:
 			self.upd = windows.callAll
-			textPad.bind("<KeyRelease-space>", self.upd)
+			textPad.bind("<KeyRelease-space>",self.upd)
 			textPad.bind("<Return>", self.upd)
 			textPad.bind("<KeyRelease-Down>", self.upd)
 			textPad.bind("<KeyRelease-Up>", self.upd)

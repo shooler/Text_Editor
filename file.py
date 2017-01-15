@@ -39,9 +39,6 @@ def open_file(*arg):
 			lnText.insert("insert", '\n' + str(int(x+1)))
 		else:
 			lnText.insert("insert", str(int(x+1)))
-	#textPad.insert(END, "\n")
-	textPad.see("1.0")
-	lnText.see("1.0")
 	updateColors(filename)
 	lnText.config(state = 'disabled')
 	ukeys.searches(textPad, lnText, windows.searchDiag)
