@@ -66,12 +66,12 @@ class main(object):
 			textPad.bind("<Up>", self.scrollup)
 			textPad.bind("<Down>", self.scrolldn)
 			master.bind("<Control-o>", file.open_file)
-			master.bind("<Control-s>", file.save_file)
+			textPad.bind("<Control-s>", file.save_file)
 			master.bind("<Control-q>", file.exit)
 			master.bind("<Shift-MouseWheel>", windows.on_horizontal)
+			master.bind("<Control-n>", windows.newTab)
 			
 			#Utility (non file keybinds)
-			master.bind("<Control-n>", windows.newTab)
 			master.bind("<Control-Key-f>", ukeys.searches.searchInit)
 			#end keybinds
 			self.master.after(0, windows.currentTab())

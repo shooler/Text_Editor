@@ -75,13 +75,14 @@ def lineNumbers(*args):
 			
 def newTab(*args):
 	global frameName
-	global tabCount
-	if '/' in args[0]:
+	global tabcount
+	if 'str' in str(type(args[0])):
 		tabName = args[0].split('/')[-1]
-		frameName = '_=_' + tabName.split('.')[0].lower()
+		frameName = '__EDITORPADTAB__' + tabName.split('.')[0].lower()
 	else:
-		tabcount += 1
-		frameName = frameName + str(tabcount)
+		frameName = 'Tab'
+		tabcount = tabcount + 1
+		frameName = '__EDITORPADTAB__' + frameName + str(tabcount)
 		tabName = "New Tab"
 	frame = ttk.Frame(n, name = frameName)
 	n.add(frame, text=tabName)
@@ -151,7 +152,7 @@ def currentTab(*args):
 	textPad.bind("<Control-KP_Subtract>", utilities.zoom_out)
 	textPad.bind("<Control-Key-comma>", utilities.backTab)
 	textPad.bind("<Control-Key-period>", utilities.forwardTab)
-
+	
 def resizeMe(x):
 	if x %2 == 0:
 		root.resizable(1,1)
@@ -348,9 +349,8 @@ root.bind_class("TNotebook", "<ButtonRelease-1>", btn_release)
 customFont = tkFont.Font(family="Ubuntu Mono", size=12)
 displayfont = tkFont.Font(family = "Ubuntu Mono", size = 12)
 
-
 n = ttk.Notebook(root, style="ButtonNotebook", name = 'n')
-frame = ttk.Frame(n, name = '1')
+frame = ttk.Frame(n, name = '__EDITORPADTAB__Tab0')
 n.add(frame, text='New Tab')
 n.select(frame)
 scrollbar = Scrollbar(frame)
@@ -402,7 +402,6 @@ searchDiag = Text(root,
 
 n.pressed_index = None
 tabs.update({n.select() : [textPa, lnTex]})
-
 textPad = textPa
 lnText = lnTex
 lineNumbers()

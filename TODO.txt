@@ -1,6 +1,8 @@
 TODO:
 make save update tab name
 
+Change syntax highlighting from regex to tokenizer	
+
 comment coloring still needs work
 
 update ctrl i to work on new tabs
@@ -13,3 +15,5 @@ best course of action is probably to refactor
 the currentTab function
 
 add ctrl-x with no selection cuts whole line(-\n)
+
+Look at editor.test/tests/demo.py
