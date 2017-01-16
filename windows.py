@@ -103,7 +103,6 @@ def newTab(*args):
 						  highlightthickness = 0,
 						  xscrollcommand = xscrollbar.set
 						  )
-	textPad.mark_set("insert", "1.0")
 	lnText = Text(frame, name = 'lnText',
 				  background = "black",
 				  foreground = config.colors["numLineColor"],
@@ -118,40 +117,44 @@ def newTab(*args):
 				  state = 'disabled'
 				 )
 	scrollbar.pack(side= RIGHT, fill = 'y')
-	lnText.insert('1.0', "1")
+	#lnText.configure(state = "normal")
+	#lnText.insert("1.0", "1\n")
+	#lnText.configure(state = "disabled")
 	lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N+S+E+W)
 	textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 	scrollbar.pack(side= RIGHT, fill = 'y')
 	tabs.update({n.select() : [textPad, lnText]})
+	textPad.focus_set()
 	currentTab()
-	
+	lineNumbers()
 	
 def currentTab(*args):
 	global textPad
 	global lnText
-	texts = tabs[n.select()]
-	textPad = texts[0]
-	lnText = texts[1]
-	root.after(500, currentTab)
-	scrollbar['command'] = on_scrollbar
-	xscrollbar['command'] = textPad.xview
-	textPad['yscrollcommand'] = on_textscroll
-	lnText['yscrollcommand'] = on_textscroll
-	textPad.bind("<KeyRelease-space>", callAll)
-	textPad.bind("<Return>", callAll)
-	textPad.bind("<KeyRelease-Down>", callAll)
-	textPad.bind("<KeyRelease-Up>", callAll)
-	textPad.bind("<KeyRelease-Return>", lineNumbers)
-	textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
-	searchDiag.bind("<Down>", searches.searchNext)
-	searchDiag.bind("<Up>", searches.searchLast)
-	searchDiag.bind("<Return>", searches.searchReturn)
-	searchDiag.bind_all("<Escape>", searches.doneSearch)
-	textPad.bind("<Control-Key-l>", utilities.newLine)
-	textPad.bind("<Control-KP_Add>", utilities.zoom_in)
-	textPad.bind("<Control-KP_Subtract>", utilities.zoom_out)
-	textPad.bind("<Control-Key-comma>", utilities.backTab)
-	textPad.bind("<Control-Key-period>", utilities.forwardTab)
+	if n.select():
+		texts = tabs[n.select()]
+		textPad = texts[0]
+		lnText = texts[1]
+		root.after(500, currentTab)
+		scrollbar['command'] = on_scrollbar
+		xscrollbar['command'] = textPad.xview
+		textPad['yscrollcommand'] = on_textscroll
+		lnText['yscrollcommand'] = on_textscroll
+		textPad.bind("<KeyRelease-space>", callAll)
+		textPad.bind("<Return>", callAll)
+		textPad.bind("<KeyRelease-Down>", callAll)
+		textPad.bind("<KeyRelease-Up>", callAll)
+		textPad.bind("<KeyRelease-Return>", lineNumbers)
+		textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
+		searchDiag.bind("<Down>", searches.searchNext)
+		searchDiag.bind("<Up>", searches.searchLast)
+		searchDiag.bind("<Return>", searches.searchReturn)
+		searchDiag.bind_all("<Escape>", searches.doneSearch)
+		textPad.bind("<Control-Key-l>", utilities.newLine)
+		textPad.bind("<Control-KP_Add>", utilities.zoom_in)
+		textPad.bind("<Control-KP_Subtract>", utilities.zoom_out)
+		textPad.bind("<Control-Key-comma>", utilities.backTab)
+		textPad.bind("<Control-Key-period>", utilities.forwardTab)
 	
 def resizeMe(x):
 	if x %2 == 0:
@@ -180,6 +183,8 @@ def btn_press(event):
 		widget.pressed_index = index
 	searches = utilityKeys.searches(textPad, lnText, searchDiag)
 	utilities = utilityKeys.utilities(textPad, customFont)
+	goto = tabs[n.select()][0]
+	goto.focus_set()
 	
 def btn_release(event):
 	x, y, widget = event.x, event.y, event.widget
@@ -193,6 +198,8 @@ def btn_release(event):
 		currentTab()
 		utilities = utilityKeys.utilities(textPad, customFont)
 		searches = utilityKeys.searches(textPad, lnText, searchDiag)
+		goto = tabs[n.select()][0]
+		goto.focus_set()
 	widget.state(["!pressed"])
 	widget.pressed_index = None
 
@@ -412,6 +419,6 @@ lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N
 textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 scrollbar.pack(side= RIGHT, fill = 'y')
 searchDiag.grid_forget()#hides the search bar(default)
-
+textPad.focus_set()
 searches = utilityKeys.searches(textPad, lnText, searchDiag)
 utilities = utilityKeys.utilities(textPad, customFont)

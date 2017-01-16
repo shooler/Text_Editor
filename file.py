@@ -32,7 +32,8 @@ def open_file(*arg):
 		textPad.insert('1.0', contents)
 		file.close()
 	#get line numbers
-	lnText.delete(1.0, "end-1c")
+	"""
+	lnText.delete(0.0, "end-1c")
 	i = int(textPad.index('end-1c').split('.')[0])
 	for x in range(i):
 		lnText.config(state = 'normal')
@@ -42,15 +43,19 @@ def open_file(*arg):
 			lnText.insert("insert", str(int(x+1)))
 	updateColors(filename)
 	lnText.config(state = 'disabled')
+	"""
 	ukeys.searches(textPad, lnText, windows.searchDiag)
 	ukeys.utilities(textPad, windows.customFont)
+	windows.lineNumbers()
 	return "break"
 
 def save_file(x):
-		if filename == "":
-			save_as()
-		else:
-			quicksave(filename)
+	currtab = windows.n.index(windows.n.select())
+	filename = windows.n.tab(currtab, 'text')
+	if filename not in openedFiles:
+		save_as()
+	else:
+		quicksave(filename)
 			
 def quicksave(filename):
 	textPad = windows.textPad
@@ -60,7 +65,8 @@ def quicksave(filename):
 	file.close()
 		
 def save_as():
-	global filename
+	textPad = windows.textPad
+	lnText = windows.lnText
 	file = fd.asksaveasfile(mode='w')
 	filename = str(file) 		#next few lines convert askopenfile object to readable filepath
 	flist = filename.split(' ') #this allows us to save without the dialog if the file already exists
@@ -70,6 +76,7 @@ def save_as():
 	openedFiles.update({filekey : filename})
 	currtab = windows.n.index(windows.n.select())
 	windows.n.tab(currtab, text = filename.split('/')[-1])
+	windows.lineNumbers()
 	if file != None:
 		#slice off the last character from get, as an extra return is added
 		data = textPad.get('1.0', END+'-1c')

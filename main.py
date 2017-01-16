@@ -66,7 +66,7 @@ class main(object):
 			textPad.bind("<Up>", self.scrollup)
 			textPad.bind("<Down>", self.scrolldn)
 			master.bind("<Control-o>", file.open_file)
-			textPad.bind("<Control-s>", file.save_file)
+			master.bind("<Control-s>", file.save_file)
 			master.bind("<Control-q>", file.exit)
 			master.bind("<Shift-MouseWheel>", windows.on_horizontal)
 			master.bind("<Control-n>", windows.newTab)
