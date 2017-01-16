@@ -17,7 +17,7 @@ cfg = config
 defslist = []
 tabs = {}
 tabcount = 0
-tablength = 1
+
 
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
@@ -129,7 +129,11 @@ def currentTab(*args):
 		xscrollbar['command'] = textPad.xview
 		textPad['yscrollcommand'] = on_textscroll
 		lnText['yscrollcommand'] = on_textscroll
-		textPad.bind("<KeyRelease>", callAll)
+		textPad.bind("<KeyRelease-Return>", callAll)
+		textPad.bind("<KeyRelease-BackSpace>", callAll)
+		textPad.bind("<KeyRelease-Left>", callAll)
+		textPad.bind("<KeyRelease-Right>", callAll)
+		textPad.bind("<KeyRelease-space>", callAll)
 		textPad.bind("<KeyRelease-Return>", lineNumbers)
 		textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
 		textPad.bind("<Control-Key-l>", utilities.newLine)
@@ -203,6 +207,7 @@ def callAll(*args):
 		startIndex, endofline = textPad.index("insert").split('.')
 		endofline = startIndex + '.' + endofline
 		startIndex = startIndex + '.0'
+		defs(startIndex, endofline)
 		for i in defslist:
 			savedDefs(startIndex, endofline, i)
 	imports(startIndex, endofline)
@@ -298,12 +303,12 @@ def keyColor(startIndex, endofline):
 	'''the highlight function, called when a Key-press event occurs'''
 	countVar = Tkinter.StringVar()
 	while True:
-		r = r'((?!\w)\d|\sif\s|\sNone|\selif\s|\selse|\sdef\s|import\s|global\s|len(?:\()|((\\h)*for\s)|\sand\s|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|\swhile\s|\sin\s|lambda\s|not\s|def\s)'
+		r = r'((?!\w)\d|((\\h)*if\s)|\sNone|((\\h)*elif\s)|((\\h)*else)|((\\h)*def\s)|(^import\s)|((\\h)*global\s)|len(?:\()|((\\h)*for\s)|((\\h)*and\s)|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|((\\h)*while\s)|((\\h)*in\s)|lambda\s|not\s|def\s)'
 		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 		if startIndex:
-			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
+			endIndex = textPad.index("%s + %sc" % (startIndex, (countVar.get())))
 			if '(' in textPad.get(startIndex, endIndex):
-				endIndex = textPad.index('%s+%sc' % (startIndex, (str(int(countVar.get())-1)))) # find end of k
+				endIndex = textPad.index("%s + %sc" % (startIndex, (str(int(countVar.get())-1)))) # find end of k
 			textPad.tag_add("keyColor", startIndex, endIndex) # add tag to k
 			textPad.tag_config("keyColor", foreground=cfg.colors['keyColor'])      # and color it with v
 			startIndex = endIndex # reset startIndex to continue searching

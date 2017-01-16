@@ -1,19 +1,32 @@
 TODO:
-make save update tab name
+PRESSING:
+	CTRL-X needs to modify line numbers
+	as well as Ctrl-Z and Ctrl-l
 
-Change syntax highlighting from regex to tokenizer	
+	appparently some text shows yellow after and.
 
-comment coloring still needs work
+	scrollbar shows up on new tabs but doesnt work
 
-update ctrl i to work on new tabs
+	add ctrl-x with no selection cuts whole line(-\n)
+	Same for ctrl-c
 
-disable dev colors not currently working,
-works temporarily on main window
-doesnt work at all on tabs
+	disable dev colors not currently working,
+	works temporarily on main window
+	doesnt work at all on tabs
+	
+	move update colors back to textConfig
 
-best course of action is probably to refactor
-the currentTab function
+	Save configuration for styling and font purposes
+	Save last opened directory
 
-add ctrl-x with no selection cuts whole line(-\n)
+SECONDARY:
+	Change syntax highlighting from regex to tokenizer	
 
-Look at editor.test/tests/demo.py
+	best course of action is probably to refactor
+	the currentTab function
+
+	Add color changer to colors dropdown
+
+	Change update colors in main
+
+	Add command line file open support

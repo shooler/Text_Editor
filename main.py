@@ -40,7 +40,6 @@ class main(object):
 			filemenu.add_command(label="New", command=windows.newTab)
 			filemenu.add_command(label="Open", command=lambda: file.open_file(''))
 			filemenu.add_command(label="Save", command=file.save_file)
-			filemenu.add_command(label="Tab", command=windows.newTab)
 			filemenu.add_separator()
 			filemenu.add_command(label="Exit", command=file.exit)
 			
@@ -65,7 +64,6 @@ class main(object):
 			#adding some General keybindings
 			textPad.bind("<Up>", self.scrollup)
 			textPad.bind("<Down>", self.scrolldn)
-			#master.unbind_all("<Control-o>")
 			master.bind_class("Text", "<Control-o>", file.open_file)
 			master.bind("<Control-s>", file.save_file)
 			master.bind("<Control-q>", file.exit)
