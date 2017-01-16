@@ -16,16 +16,8 @@ import utilityKeys
 cfg = config
 defslist = []
 tabs = {}
-frameName = 'Tab'
 tabcount = 0
-tab = "\n"
-spacetab = "    "
 tablength = 1
-searchStartIndex = 0
-searchindex = 0
-searchtext = ''
-searchList = []
-
 
 root = Tkinter.Tk(className="Editor")
 root.geometry("500x500")
