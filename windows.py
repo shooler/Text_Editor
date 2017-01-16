@@ -72,6 +72,7 @@ def lineNumbers(*args):
 		else:
 			lnText.insert("insert", str(int(x+1)))
 	lnText.see(index)
+	return "break"
 			
 def newTab(*args):
 	global frameName
@@ -80,9 +81,8 @@ def newTab(*args):
 		tabName = args[0].split('/')[-1]
 		frameName = '__EDITORPADTAB__' + tabName.split('.')[0].lower()
 	else:
-		frameName = 'Tab'
 		tabcount = tabcount + 1
-		frameName = '__EDITORPADTAB__' + frameName + str(tabcount)
+		frameName = '__EDITORPADTAB__Tab' + str(tabcount)
 		tabName = "New Tab"
 	frame = ttk.Frame(n, name = frameName)
 	n.add(frame, text=tabName)
@@ -117,9 +117,6 @@ def newTab(*args):
 				  state = 'disabled'
 				 )
 	scrollbar.pack(side= RIGHT, fill = 'y')
-	#lnText.configure(state = "normal")
-	#lnText.insert("1.0", "1\n")
-	#lnText.configure(state = "disabled")
 	lnText.pack(side= LEFT, fill = 'y')#.grid(column=0, row = 1, rowspan=2, sticky=N+S+E+W)
 	textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, rowspan=2, sticky=W+E+N+S)
 	scrollbar.pack(side= RIGHT, fill = 'y')
@@ -140,21 +137,18 @@ def currentTab(*args):
 		xscrollbar['command'] = textPad.xview
 		textPad['yscrollcommand'] = on_textscroll
 		lnText['yscrollcommand'] = on_textscroll
-		textPad.bind("<KeyRelease-space>", callAll)
-		textPad.bind("<Return>", callAll)
-		textPad.bind("<KeyRelease-Down>", callAll)
-		textPad.bind("<KeyRelease-Up>", callAll)
+		textPad.bind("<KeyRelease>", callAll)
 		textPad.bind("<KeyRelease-Return>", lineNumbers)
 		textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
-		searchDiag.bind("<Down>", searches.searchNext)
-		searchDiag.bind("<Up>", searches.searchLast)
-		searchDiag.bind("<Return>", searches.searchReturn)
-		searchDiag.bind_all("<Escape>", searches.doneSearch)
 		textPad.bind("<Control-Key-l>", utilities.newLine)
 		textPad.bind("<Control-KP_Add>", utilities.zoom_in)
 		textPad.bind("<Control-KP_Subtract>", utilities.zoom_out)
 		textPad.bind("<Control-Key-comma>", utilities.backTab)
 		textPad.bind("<Control-Key-period>", utilities.forwardTab)
+		searchDiag.bind("<Down>", searches.searchNext)
+		searchDiag.bind("<Up>", searches.searchLast)
+		searchDiag.bind("<Return>", searches.searchReturn)
+		searchDiag.bind_all("<Escape>", searches.doneSearch)
 	
 def resizeMe(x):
 	if x %2 == 0:
@@ -376,8 +370,6 @@ textPa = Text(frame, name = 'textPad',
 					  highlightthickness = 0,
 					  xscrollcommand = xscrollbar.set
 					  )
-textPa.mark_set("insert", "1.0")
-
 lnTex = Text(frame, name = 'lnText',
 			  background = "black",
 			  foreground = config.colors["numLineColor"],
@@ -392,7 +384,6 @@ lnTex = Text(frame, name = 'lnText',
 			  state = 'normal'
 			)
 lnTex.config(state = 'disabled')
-	
 searchDiag = Text(root,
 				  background = "white",
 				  foreground = "black",
@@ -405,7 +396,6 @@ searchDiag = Text(root,
 				  font = customFont,
 				  yscrollcommand=scrollbar.set
 				 )
-
 
 n.pressed_index = None
 tabs.update({n.select() : [textPa, lnTex]})

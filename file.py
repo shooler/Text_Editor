@@ -9,14 +9,9 @@ from windows import *
 import ttk
 
 openedFiles = {}
-updateColors = windows.callAll
-master = windows.root
-filename = ""
 
-
-def open_file(*arg):
-	global filename
-	file = fd.askopenfile(parent=master,mode='rb',title='Select a file')
+def open_file(*args):
+	file = fd.askopenfile(parent=windows.root,mode='rb',title='Select a file')
 	filename = str(file) 		#next few lines convert askopenfile object to readable filepath
 	flist = filename.split(' ') #this allows us to save without the dialog if the file already exists
 	filename = flist[2]
@@ -28,26 +23,15 @@ def open_file(*arg):
 	lnText = windows.lnText
 	if file != None:
 		contents = file.read()
-		textPad.delete(1.0,"end")
+		textPad.delete('1.0',"end")
 		textPad.insert('1.0', contents)
 		file.close()
 	#get line numbers
-	"""
-	lnText.delete(0.0, "end-1c")
-	i = int(textPad.index('end-1c').split('.')[0])
-	for x in range(i):
-		lnText.config(state = 'normal')
-		if x != 0:
-			lnText.insert("insert", '\n' + str(int(x+1)))
-		else:
-			lnText.insert("insert", str(int(x+1)))
-	updateColors(filename)
-	lnText.config(state = 'disabled')
-	"""
 	ukeys.searches(textPad, lnText, windows.searchDiag)
 	ukeys.utilities(textPad, windows.customFont)
 	windows.lineNumbers()
-	return "break"
+	windows.callAll('/')
+	return 'break'
 
 def save_file(x):
 	currtab = windows.n.index(windows.n.select())
@@ -76,7 +60,6 @@ def save_as():
 	openedFiles.update({filekey : filename})
 	currtab = windows.n.index(windows.n.select())
 	windows.n.tab(currtab, text = filename.split('/')[-1])
-	windows.lineNumbers()
 	if file != None:
 		#slice off the last character from get, as an extra return is added
 		data = textPad.get('1.0', END+'-1c')
@@ -85,4 +68,4 @@ def save_as():
 
 def exit(*arg):
 	if tkMessageBox.askokcancel("Quit", "Quit?"):
-		master.destroy()
+		windows.root.destroy()
