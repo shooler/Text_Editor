@@ -30,6 +30,7 @@ class textColor(object):
 			startIndex = '1.0'
 			endofline = 'end'
 		else:
+			print "single line mode"
 			startIndex, endofline = self.textPad.index("insert").split('.')
 			endofline = startIndex + '.' + endofline
 			startIndex = startIndex + '.0'

@@ -29,11 +29,12 @@ def open_file(*args):
 		textPad.delete('1.0',"end")
 		textPad.insert('1.0', contents)
 		file.close()
-	#get line numbers
 	ukeys.searches(textPad, lnText, windows.searchDiag)
 	ukeys.utilities(textPad, windows.customFont)
 	windows.lineNumbers()
 	tconf = textConfig.textColor(textPad, '/', '')
+	textConfig.textColor.callAll()
+	tconf = textConfig.textColor(textPad, '', '')
 	textConfig.textColor.callAll()
 	return 'break'
 
