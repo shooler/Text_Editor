@@ -9,12 +9,14 @@ import tkMessageBox
 import sys
 import os
 import config
+import textConfig
 import utilityKeys
+from textConfig import *
+
 
 
 
 cfg = config
-defslist = []
 tabs = {}
 tabcount = 0
 
@@ -74,7 +76,7 @@ def newTab(*args):
 		frameName = '__EDITORPADTAB__' + tabName.split('.')[0].lower()
 	else:
 		tabcount = tabcount + 1
-		frameName = '__EDITORPADTAB__Tab' + str(tabcount)
+		frameName = '__EDITORPADTAB__Tab' + str(tabcount) + "__UNSAVED__"
 		tabName = "New Tab"
 	frame = ttk.Frame(n, name = frameName)
 	n.add(frame, text=tabName)
@@ -83,7 +85,7 @@ def newTab(*args):
 	xscrollbar = Scrollbar(frame,  orient = HORIZONTAL, width=0)
 	textPad = Text(frame, name = 'textPad',
 						  background = "black",
-						  foreground = config.colors['foregroundColor'],
+						  foreground = config.colors['highlightOff'],
 						  insertbackground = "white",
 						  font = customFont,
 						  undo = True,
@@ -115,6 +117,7 @@ def newTab(*args):
 	tabs.update({n.select() : [textPad, lnText]})
 	textPad.focus_set()
 	currentTab()
+	tconf = textConfig.textColor(textPad, 'nofile', '')
 	lineNumbers()
 	
 def currentTab(*args):
@@ -129,11 +132,10 @@ def currentTab(*args):
 		xscrollbar['command'] = textPad.xview
 		textPad['yscrollcommand'] = on_textscroll
 		lnText['yscrollcommand'] = on_textscroll
-		textPad.bind("<KeyRelease-Return>", callAll)
-		textPad.bind("<KeyRelease-BackSpace>", callAll)
-		textPad.bind("<KeyRelease-Left>", callAll)
-		textPad.bind("<KeyRelease-Right>", callAll)
-		textPad.bind("<KeyRelease-space>", callAll)
+		textPad.bind("<Return>", textConfig.textColor.callAll)
+		textPad.bind("<KeyRelease-Left>", textConfig.textColor.callAll)
+		textPad.bind("<KeyRelease-Right>", textConfig.textColor.callAll)
+		textPad.bind("<KeyRelease-space>", textConfig.textColor.callAll)
 		textPad.bind("<KeyRelease-Return>", lineNumbers)
 		textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
 		textPad.bind("<Control-Key-l>", utilities.newLine)
@@ -145,6 +147,7 @@ def currentTab(*args):
 		searchDiag.bind("<Up>", searches.searchLast)
 		searchDiag.bind("<Return>", searches.searchReturn)
 		searchDiag.bind_all("<Escape>", searches.doneSearch)
+	
 	
 def resizeMe(x):
 	if x %2 == 0:
@@ -173,6 +176,7 @@ def btn_press(event):
 		widget.pressed_index = index
 	searches = utilityKeys.searches(textPad, lnText, searchDiag)
 	utilities = utilityKeys.utilities(textPad, customFont)
+	tconf = textConfig.textColor(textPad, 'nofile', '')
 	goto = tabs[n.select()][0]
 	goto.focus_set()
 	
@@ -188,6 +192,7 @@ def btn_release(event):
 		currentTab()
 		utilities = utilityKeys.utilities(textPad, customFont)
 		searches = utilityKeys.searches(textPad, lnText, searchDiag)
+		tconf = textConfig.textColor(textPad, 'nofile', '')
 		goto = tabs[n.select()][0]
 		goto.focus_set()
 	widget.state(["!pressed"])
@@ -195,151 +200,6 @@ def btn_release(event):
 
 def on_horizontal(event):
 	canvas.xview_scroll(-1 * -event.delta, 'units')
-	
-
-# START REGEX FOR COLORING
-def callAll(*args):
-	if '/' in str(args[0]):
-		startIndex = '1.0'
-		endofline = 'end'
-		defs(startIndex, endofline)
-	else:
-		startIndex, endofline = textPad.index("insert").split('.')
-		endofline = startIndex + '.' + endofline
-		startIndex = startIndex + '.0'
-		defs(startIndex, endofline)
-		for i in defslist:
-			savedDefs(startIndex, endofline, i)
-	imports(startIndex, endofline)
-	puncs(startIndex, endofline)
-	keyColor(startIndex, endofline)
-	dots(startIndex, endofline)
-	selfUpdate(startIndex, endofline)
-	updateComments(startIndex, endofline)
-	updateQuoteColors(startIndex, endofline)
-	
-def updateQuoteColors(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		startIndex = textPad.search("('[^']*'|\"[^\"]*\")", startIndex, endofline, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			textPad.tag_add("searchquotes", startIndex, endIndex)
-			textPad.tag_config("searchquotes", foreground = cfg.colors['quoteColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-			
-def updateComments(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		startIndex = textPad.search(r"(?![\"'])(?:#)(.*)(?![\"'])", startIndex, endofline, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			textPad.tag_add("comments", startIndex, endIndex)
-			textPad.tag_config("comments", foreground = cfg.colors['commentColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-
-#(?:def\s)(.*)(?=[(])
-def defs(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		startIndex = textPad.search(r'def\s(.*?)\(', startIndex, endofline, count=countVar, regexp=True)
-		if startIndex:
-			slist = startIndex.split('.')
-			slist[1] = str(int(slist[1])+ 3)
-			startIndex = '.'.join(slist)
-			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-4))) # find end of k
-			v = textPad.get(startIndex, endIndex)
-			if v not in defslist:
-				defslist.append(v)
-			textPad.tag_add("defs", startIndex, endIndex)
-			textPad.tag_config("defs", foreground = cfg.colors['defColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-def savedDefs(startIndex, endofline, k):
- 	countVar = Tkinter.StringVar()
-	while True:
-		startIndex = textPad.search(r'(' + k + '\(\))', startIndex, endofline, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-2))) # find end of k
-			textPad.tag_add("saveddefs", startIndex, endIndex)
-			textPad.tag_config("saveddefs", foreground = cfg.colors['defColor']) 
-			variable = textPad.get(startIndex, endIndex)
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-			
-def selfUpdate(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		startIndex = textPad.search(r'self[\.]|self[\(]', startIndex, endofline, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			variable = textPad.get(startIndex, endIndex)
-			textPad.tag_add("selfTag", startIndex, endIndex)
-			textPad.tag_config("selfTag", foreground = cfg.colors['selfColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-			
-def imports(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		startIndex = textPad.search('(?:import\s.*)(?=$)', startIndex, endofline, count=countVar, regexp=True)
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
-			variable = textPad.get(startIndex, endIndex)
-			textPad.tag_add("imp", startIndex, endIndex)
-			textPad.tag_config("imp", foreground = cfg.colors['importColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-
-def keyColor(startIndex, endofline):
-	'''the highlight function, called when a Key-press event occurs'''
-	countVar = Tkinter.StringVar()
-	while True:
-		r = r'((?!\w)\d|((\\h)*if\s)|\sNone|((\\h)*elif\s)|((\\h)*else)|((\\h)*def\s)|(^import\s)|((\\h)*global\s)|len(?:\()|((\\h)*for\s)|((\\h)*and\s)|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|((\\h)*while\s)|((\\h)*in\s)|lambda\s|not\s|def\s)'
-		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
-		if startIndex:
-			endIndex = textPad.index("%s + %sc" % (startIndex, (countVar.get())))
-			if '(' in textPad.get(startIndex, endIndex):
-				endIndex = textPad.index("%s + %sc" % (startIndex, (str(int(countVar.get())-1)))) # find end of k
-			textPad.tag_add("keyColor", startIndex, endIndex) # add tag to k
-			textPad.tag_config("keyColor", foreground=cfg.colors['keyColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-
-def puncs(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		r = '(\\W)'
-		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
-		if startIndex:
-			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
-			textPad.tag_add("puncolor", startIndex, endIndex) # add tag to k
-			textPad.tag_config("puncolor", foreground=cfg.colors['puncColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
-			
-def dots(startIndex, endofline):
-	countVar = Tkinter.StringVar()
-	while True:
-		r = '(\.(?![0-9])[^(\"\']*)'
-		startIndex = textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
-		if startIndex:
-			endIndex = textPad.index('%s+%sc' % (startIndex, (countVar.get())))
-			textPad.tag_add("dotColor", startIndex, endIndex) # add tag to k
-			textPad.tag_config("dotColor", foreground=cfg.colors['dotColor'])      # and color it with v
-			startIndex = endIndex # reset startIndex to continue searching
-		else:
-			break
 			
 root.bind_class("TNotebook", "<ButtonPress-1>", btn_press, True)
 root.bind_class("TNotebook", "<ButtonRelease-1>", btn_release)
@@ -355,7 +215,7 @@ scrollbar = Scrollbar(frame)
 xscrollbar = Scrollbar(frame,  orient = HORIZONTAL, width=0)
 textPa = Text(frame, name = 'textPad',
 					  background = "black",
-					  foreground = config.colors['foregroundColor'],
+					  foreground = config.colors['highlightOff'],
 					  insertbackground = "white",
 					  font = customFont,
 					  undo = True,
@@ -407,5 +267,7 @@ textPad.pack(side= LEFT, expand = True, fill = BOTH)#.grid(column=1, row = 1, ro
 scrollbar.pack(side= RIGHT, fill = 'y')
 searchDiag.grid_forget()#hides the search bar(default)
 textPad.focus_set()
+
 searches = utilityKeys.searches(textPad, lnText, searchDiag)
 utilities = utilityKeys.utilities(textPad, customFont)
+tconf = textConfig.textColor(textPad, 'nofile', 'off')

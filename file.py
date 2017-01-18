@@ -4,9 +4,12 @@ import Tkinter
 import tkFileDialog as fd
 import utilityKeys as ukeys
 import os
+import textConfig
+from textConfig import *
 from main import *
 from windows import *
 import ttk
+import config
 
 openedFiles = {}
 
@@ -30,13 +33,13 @@ def open_file(*args):
 	ukeys.searches(textPad, lnText, windows.searchDiag)
 	ukeys.utilities(textPad, windows.customFont)
 	windows.lineNumbers()
-	windows.callAll('/')
+	tconf = textConfig.textColor(textPad, '/', '')
+	textConfig.textColor.callAll()
 	return 'break'
 
 def save_file(x):
 	currtab = windows.n.index(windows.n.select())
 	filename = windows.n.tab(currtab, 'text')
-	print filename
 	if filename not in openedFiles:
 		save_as()
 	else:
@@ -66,6 +69,10 @@ def save_as():
 		data = textPad.get('1.0', END+'-1c')
 		file.write(data)
 		file.close()
+		textPad.config(fg = config.colors['foregroundColor'])	
+		textConfig.textColor(textPad, '/', 'on')
+		textConfig.textColor.toggleHighlights()
+		
 
 def exit(*arg):
 	if tkMessageBox.askokcancel("Quit", "Quit?"):

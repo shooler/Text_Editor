@@ -9,10 +9,13 @@ import ttk
 import config
 import utilityKeys
 import itertools
+import textConfig
 from Tkinter import *
 from ScrolledText import * # Because Tkinter textarea does not provide scrolling
 from font import *
 from windows import *
+from textConfig import *
+
 
 
 ukeys = utilityKeys
@@ -22,7 +25,7 @@ searches = windows.searches
 
 class main(object):
 	def __init__(self,master):
-			self.upd = ''
+			self.upd = 'on'
 			self.master = master
 			self.lineTracker = []
 			fchange = font.fontChange()
@@ -75,24 +78,16 @@ class main(object):
 			self.master.after(0, windows.currentTab())
 			self.master.mainloop()
 			
-			
 	def toggleDevColors(self,*args):
-		for tag in windows.textPad.tag_names():
-			windows.textPad.tag_delete(tag)
-		if self.upd == windows.callAll:
-			self.upd = self.dummy
-			windows.callAll('/')
-			textPad.bind("<KeyRelease-space>", self.dummy)
-			textPad.bind("<Return>", self.dummy)
-			textPad.bind("<KeyRelease-Down>", self.dummy)
-			textPad.bind("<KeyRelease-Up>", self.dummy)
+		if self.upd == 'on':
+			self.upd = "off"
+			textConfig.textColor(windows.textPad, '', 'off')
+			textConfig.textColor.toggleHighlights()
 		else:
-			self.upd = windows.callAll
-			textPad.bind("<KeyRelease-space>",self.upd)
-			textPad.bind("<Return>", self.upd)
-			textPad.bind("<KeyRelease-Down>", self.upd)
-			textPad.bind("<KeyRelease-Up>", self.upd)
-		
+			self.upd = 'on'
+			textConfig.textColor(windows.textPad, '/', 'on')
+			textConfig.textColor.toggleHighlights()
+					
 		
 	def doublecall(self, x):
 		self.increment()

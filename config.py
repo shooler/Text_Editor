@@ -11,5 +11,6 @@ colors = {
 "keyColor" : "yellow",
 "selfColor" : "white",
 "numLineColor" : "white",
-"puncColor" : "white"
+"puncColor" : "white",
+"highlightOff" : "white"
 }
