@@ -70,10 +70,11 @@ def save_as():
 		data = textPad.get('1.0', END+'-1c')
 		file.write(data)
 		file.close()
-		textPad.config(fg = config.colors['foregroundColor'])	
-		textConfig.textColor(textPad, '/', 'on')
-		textConfig.textColor.toggleHighlights()
-		
+		if '.py' in filekey:
+			textPad.config(fg = config.colors['foregroundColor'])	
+			textConfig.textColor(textPad, '/', 'on')
+			textConfig.textColor.toggleHighlights()
+
 
 def exit(*arg):
 	if tkMessageBox.askokcancel("Quit", "Quit?"):
