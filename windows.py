@@ -117,8 +117,11 @@ def newTab(*args):
 	tabs.update({n.select() : [textPad, lnText]})
 	textPad.focus_set()
 	currentTab()
-	tconf = textConfig.textColor(textPad, 'nofile', '')
+	tconf = textConfig.textColor(textPad, 'nofile', 'on')
 	lineNumbers()
+	if 'str' in str(type(args[0])):
+		textPad.configure(fg = config.colors["foregroundColor"])
+		tconf.toggleHighlights()
 	
 def currentTab(*args):
 	global textPad

@@ -15,7 +15,6 @@ class textColor(object):
 		self.toggle = toggle
 	@classmethod
 	def toggleHighlights(self, *args):
-		print "called", self.toggle
 		for tag in windows.textPad.tag_names():
 			windows.textPad.tag_delete(tag)
 		if self.toggle == "on":
