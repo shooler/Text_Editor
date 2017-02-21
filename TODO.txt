@@ -1,5 +1,7 @@
 TODO:
 PRESSING:
+	Add functionality to move lines up and down with control arrows
+
 	CTRL-X needs to modify line numbers
 	as well as Ctrl-Z and Ctrl-l
 

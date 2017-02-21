@@ -4,12 +4,12 @@ import windows
 import config as cfg
 from Tkinter import *
 
-defslist = []
 
 
 class textColor(object):
 	@classmethod
 	def __init__(self, textPad, filepass, toggle):
+		self.defslist = []
 		self.textPad = textPad
 		self.filepass = filepass
 		self.toggle = toggle
@@ -29,13 +29,13 @@ class textColor(object):
 		if '/' in self.filepass:
 			startIndex = '1.0'
 			endofline = 'end'
+			self.defs(startIndex, endofline)
 		else:
-			print "single line mode"
 			startIndex, endofline = self.textPad.index("insert").split('.')
 			endofline = startIndex + '.' + endofline
 			startIndex = startIndex + '.0'
 			self.defs(startIndex, endofline)
-			for i in defslist:
+			for i in self.defslist:
 				self.savedDefs(startIndex, endofline, i)
 			self.defs(startIndex, endofline)
 		self.imports(startIndex, endofline)
@@ -75,15 +75,15 @@ class textColor(object):
 	def defs(self, startIndex, endofline):
 		countVar = Tkinter.StringVar()
 		while True:
-			startIndex = self.textPad.search(r'def\s(.*?)\(', startIndex, endofline, count=countVar, regexp=True)
+			startIndex = self.textPad.search(r'def\s+(\w*?)\(|class\s+(\w*?)\(', startIndex, endofline, count=countVar, regexp=True)
 			if startIndex:
 				slist = startIndex.split('.')
 				slist[1] = str(int(slist[1])+ 3)
 				startIndex = '.'.join(slist)
 				endIndex = self.textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-4))) # find end of k
 				v = self.textPad.get(startIndex, endIndex)
-				if v not in defslist:
-					defslist.append(v)
+				if v not in self.defslist:
+					self.defslist.append(v)
 				self.textPad.tag_add("defs", startIndex, endIndex)
 				self.textPad.tag_config("defs", foreground = cfg.colors['defColor'])      # and color it with v
 				startIndex = endIndex # reset startIndex to continue searching
@@ -93,7 +93,7 @@ class textColor(object):
 	def savedDefs(self, startIndex, endofline, k):
 		countVar = Tkinter.StringVar()
 		while True:
-			startIndex = self.textPad.search(r'(' + k + '\(\))', startIndex, endofline, count=countVar, regexp=True)
+			startIndex = self.textPad.search(r'(' + k + '\([.*]\))', startIndex, endofline, count=countVar, regexp=True)
 			if startIndex:
 				endIndex = self.textPad.index("%s + %sc" % (startIndex, str(int(countVar.get())-2))) # find end of k
 				self.textPad.tag_add("saveddefs", startIndex, endIndex)
@@ -119,12 +119,12 @@ class textColor(object):
 	def imports(self, startIndex, endofline):
 		countVar = Tkinter.StringVar()
 		while True:
-			startIndex = self.textPad.search('(?:import\s.*)(?=$)', startIndex, endofline, count=countVar, regexp=True)
+			startIndex = self.textPad.search('(?=import\s)(.*)|(?=from\s)(.*)', startIndex, endofline, count=countVar, regexp=True)
 			if startIndex:
-				endIndex = self.textPad.index("%s + %sc" % (startIndex, countVar.get())) # find end of k
+				endIndex = self.textPad.index("%s + %sc" % (startIndex, countVar.get()))
 				variable = self.textPad.get(startIndex, endIndex)
 				self.textPad.tag_add("imp", startIndex, endIndex)
-				self.textPad.tag_config("imp", foreground = cfg.colors['importColor'])      # and color it with v
+				self.textPad.tag_config("imp", foreground = cfg.colors['importColor'])
 				startIndex = endIndex # reset startIndex to continue searching
 			else:
 				break
@@ -133,7 +133,7 @@ class textColor(object):
 		'''the highlight function, called when a Key-press event occurs'''
 		countVar = Tkinter.StringVar()
 		while True:
-			r = r'((?!\w)\d|((\\h)*if\s)|\sNone|((\\h)*elif\s)|((\\h)*else)|((\\h)*def\s)|(^import\s)|((\\h)*global\s)|len(?:\()|((\\h)*for\s)|((\\h)*and\s)|(range)(?:[(])|print\s|int(?:\()|str(?:\()|float(:?\()|break|True|False|((\\h)*while\s)|((\\h)*in\s)|lambda\s|not\s|def\s)'
+			r = r'((?!\w)\d|(^\s?if([^\w]))|\sNone\s|(^\s?elif([^\w]))|(^\s?else)|(^\s?def\s)|(\s?import\s)|(^\s?global\s)|len(?:\()|(^\s?for([^\w]))|(\sand\s)|(range(?:[(]))|^\s?print\s|int(?:\()|str(?:\()|float(:?\()|\sbreak\s|\sTrue\s|\sFalse\s|(^\s?while\s)|(\sin\s)|\slambda\s|\snot\s|^\s?from\s)|^\s?class\s|\d'
 			startIndex = self.textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 			if startIndex:
 				endIndex = self.textPad.index("%s + %sc" % (startIndex, (countVar.get())))
@@ -161,7 +161,7 @@ class textColor(object):
 	def dots(self, startIndex, endofline):
 		countVar = Tkinter.StringVar()
 		while True:
-			r = '(\.(?![0-9])[^(\"\']*)'
+			r = '(\.(?![0-9])[^(\"\'=\s]*)'
 			startIndex = self.textPad.search(r, startIndex, endofline, count = countVar, regexp=True) # search for occurence of k
 			if startIndex:
 				endIndex = self.textPad.index('%s+%sc' % (startIndex, (countVar.get())))

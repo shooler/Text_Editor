@@ -138,6 +138,8 @@ def currentTab(*args):
 		textPad.bind("<Return>", textConfig.textColor.callAll)
 		textPad.bind("<KeyRelease-Left>", textConfig.textColor.callAll)
 		textPad.bind("<KeyRelease-Right>", textConfig.textColor.callAll)
+		textPad.bind("<KeyPress-Up>", textConfig.textColor.callAll)
+		textPad.bind("<KeyPress-Down>", textConfig.textColor.callAll)
 		textPad.bind("<KeyRelease-space>", textConfig.textColor.callAll)
 		textPad.bind("<KeyRelease-Return>", lineNumbers)
 		textPad.bind("<KeyRelease-BackSpace>", lineNumbers)

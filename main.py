@@ -64,7 +64,8 @@ class main(object):
 			menu.add_cascade(label="Help", menu=helpmenu)
 			helpmenu.add_command(label="About...", command=self.about)
 			
-			#adding some General keybindings
+			#Non page specific keybinds
+			#Page specific binds located in windows.py
 			textPad.bind("<Up>", self.scrollup)
 			textPad.bind("<Down>", self.scrolldn)
 			master.bind_class("Text", "<Control-o>", file.open_file)
