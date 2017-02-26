@@ -56,9 +56,9 @@ class main(object):
 			
 			submenu = Menu(menu, tearoff=0)
 			stylemenu.add_cascade(label="Presets", menu=submenu, underline=0)
-			submenu.add_command(label = "White on Black", command=lambda:colors("white", "black", "white"))
-			submenu.add_command(label = "Black on White", command=lambda:colors("black", "white", "black"))
-			submenu.add_command(label = "Midnight", command=lambda:colors("light blue", "dark slate gray", "light blue"))
+			submenu.add_command(label = "White on Black", command=lambda:colors("WoB"))
+			submenu.add_command(label = "Black on White", command=lambda:colors("BoW"))
+			submenu.add_command(label = "Midnight", command=lambda:colors("Midnight")) #change from midnight to something else, defualt it midnight
 			
 			helpmenu = Menu(menu, tearoff=0)
 			menu.add_cascade(label="Help", menu=helpmenu)
@@ -152,6 +152,22 @@ class popupWindow(object):
 			lnText.configure(background = str(self.bg.get()))
 			self.top.destroy()
 			
-def colors(fore, back, insert):
-			textPad.configure(foreground = fore, background = back, insertbackground = insert)	
-			lnText.configure(foreground = fore, background = back, insertbackground = insert)
+def colors(pal):
+			picker = ''
+			if pal == "WoB":
+				for i in config.colors:
+					config.colors[i] = config.whiteOnBlack[i]
+			elif pal == "BoW":
+				for i in config.colors:
+					config.colors[i] = config.blackOnWhite[i]
+			else:
+				for i in config.colors:
+					config.colors[i] = config.midnight[i]
+			
+			
+			windows.textPad.configure(foreground = config.colors['foregroundColor'], background = config.colors['bgColor'], insertbackground = config.colors['numLineColor'])
+			windows.lnText.configure(foreground = config.colors['foregroundColor'], background = config.colors['bgColor'], insertbackground = config.colors['numLineColor'])
+			cchange = textConfig.textColor(windows.textPad, '/', 'pass')
+			cchange.callAll()
+			cchange = textConfig.textColor(windows.textPad, ' ', 'pass')
+			

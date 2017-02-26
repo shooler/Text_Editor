@@ -33,9 +33,11 @@ def open_file(*args):
 	ukeys.utilities(textPad, windows.customFont)
 	windows.lineNumbers()
 	tconf = textConfig.textColor(textPad, '/', '')
-	textConfig.textColor.callAll()
+	textConfig.textColor.callAll() 
 	tconf = textConfig.textColor(textPad, '', '')
-	textConfig.textColor.callAll()
+	textConfig.textColor.callAll()#these may be silly but they initialize the highlighting
+								  #by running through once then setting it to run inline
+	textPad.mark_set("insert", "1.0")
 	return 'break'
 
 def save_file(x):

@@ -13,9 +13,6 @@ import textConfig
 import utilityKeys
 from textConfig import *
 
-
-
-
 cfg = config
 tabs = {}
 tabcount = 0
@@ -68,6 +65,11 @@ def lineNumbers(*args):
 	lnText.see(index)
 	return "break"
 			
+def newLineAndlineNumbers(*args):
+	utilities.newLine()
+	lineNumbers()
+	#This is a super lazy workaround to the ctrl-l function not updating line numbers
+	
 def newTab(*args):
 	global frameName
 	global tabcount
@@ -84,9 +86,9 @@ def newTab(*args):
 	scrollbar = Scrollbar(frame)
 	xscrollbar = Scrollbar(frame,  orient = HORIZONTAL, width=0)
 	textPad = Text(frame, name = 'textPad',
-						  background = "black",
-						  foreground = config.colors['highlightOff'],
-						  insertbackground = "white",
+						  background = config.colors['bgColor'],
+						  foreground = config.colors['foregroundColor'],
+						  insertbackground = config.colors['numLineColor'],
 						  font = customFont,
 						  undo = True,
 						  maxundo = -1,
@@ -98,9 +100,9 @@ def newTab(*args):
 						  xscrollcommand = xscrollbar.set
 						  )
 	lnText = Text(frame, name = 'lnText',
-				  background = "black",
+				  background = config.colors['bgColor'],
 				  foreground = config.colors["numLineColor"],
-				  insertbackground = "white",
+				  insertbackground = config.colors["numLineColor"],
 				  highlightthickness = 0,
 				  width = 4,
 				  padx = 3,
@@ -118,6 +120,7 @@ def newTab(*args):
 	textPad.focus_set()
 	currentTab()
 	tconf = textConfig.textColor(textPad, 'nofile', 'on')
+	utilities = utilityKeys.utilities(textPad, customFont)
 	lineNumbers()
 	if 'str' in str(type(args[0])):
 		textPad.configure(fg = config.colors["foregroundColor"])
@@ -141,9 +144,11 @@ def currentTab(*args):
 		textPad.bind("<KeyPress-Up>", textConfig.textColor.callAll)
 		textPad.bind("<KeyPress-Down>", textConfig.textColor.callAll)
 		textPad.bind("<KeyRelease-space>", textConfig.textColor.callAll)
+		textPad.bind("<Control-Key-X>", lineNumbers)
+		textPad.bind("<Control-Key-Z>", lineNumbers)
 		textPad.bind("<KeyRelease-Return>", lineNumbers)
 		textPad.bind("<KeyRelease-BackSpace>", lineNumbers)
-		textPad.bind("<Control-Key-l>", utilities.newLine)
+		textPad.bind("<Control-Key-l>", newLineAndlineNumbers)
 		textPad.bind("<Control-KP_Add>", utilities.zoom_in)
 		textPad.bind("<Control-KP_Subtract>", utilities.zoom_out)
 		textPad.bind("<Control-Key-comma>", utilities.backTab)
@@ -219,9 +224,9 @@ n.select(frame)
 scrollbar = Scrollbar(frame)
 xscrollbar = Scrollbar(frame,  orient = HORIZONTAL, width=0)
 textPa = Text(frame, name = 'textPad',
-					  background = "black",
-					  foreground = config.colors['highlightOff'],
-					  insertbackground = "white",
+					  background = config.colors["bgColor"],
+					  foreground = config.colors['foregroundColor'],
+					  insertbackground = config.colors['numLineColor'],
 					  font = customFont,
 					  undo = True,
 					  maxundo = -1,
@@ -233,9 +238,9 @@ textPa = Text(frame, name = 'textPad',
 					  xscrollcommand = xscrollbar.set
 					  )
 lnTex = Text(frame, name = 'lnText',
-			  background = "black",
+			  background = config.colors['bgColor'],
 			  foreground = config.colors["numLineColor"],
-			  insertbackground = "white",
+			  insertbackground = config.colors["numLineColor"],
 			  highlightthickness = 0,
 			  width = 4,
 			  padx = 3,

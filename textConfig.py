@@ -13,6 +13,7 @@ class textColor(object):
 		self.textPad = textPad
 		self.filepass = filepass
 		self.toggle = toggle
+		self.cancelColor = False
 	@classmethod
 	def toggleHighlights(self, *args):
 		for tag in windows.textPad.tag_names():
@@ -20,6 +21,7 @@ class textColor(object):
 		if self.toggle == "on":
 			self.cancelColoring = False
 			self.callAll()
+			self.filepass = ''
 		else:
 			self.cancelColoring = True
 	@classmethod

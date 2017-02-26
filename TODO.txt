@@ -1,34 +1,38 @@
 TODO:
 PRESSING:
-	Add functionality to move lines up and down with control arrows
-
-	CTRL-X needs to modify line numbers
-	as well as Ctrl-Z and Ctrl-l
-
-	appparently some text shows yellow after and.
+	Add functionality to move lines up and down with control+arrows
 
 	scrollbar shows up on new tabs but doesnt work
 
 	add ctrl-x with no selection cuts whole line(-\n)
 	Same for ctrl-c
 
-	disable dev colors not currently working,
-	works temporarily on main window
-	doesnt work at all on tabs
-	
-	move update colors back to textConfig
-
 	Save configuration for styling and font purposes
 	Save last opened directory
 
-SECONDARY:
-	Change syntax highlighting from regex to tokenizer	
+	Add ability to switch position of tabs via keyboard shortcut
+		and via moving with the mouse
 
-	best course of action is probably to refactor
-	the currentTab function
+SECONDARY:
+	Gonna have to change how color pallettes are stored in config, currently
+	only draws from config.colors[], but there need to be multiple pallettes
+	
+	Add support for microsoft windows
+
+	See about switching current tab loop to threaded process
+
+	Fix terminal error message when closing
+
+	Change syntax highlighting from regex to tokenizer	
+		best course of action is probably to refactor
+		the currentTab function
 
 	Add color changer to colors dropdown
 
 	Change update colors in main
 
-	Add command line file open support
+	Add command line open file support
+	
+	FTP plugin would be nice
+
+	Add compile/run function

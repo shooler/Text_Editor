@@ -2,7 +2,7 @@ import Tkinter
 import tkFileDialog
 import tkMessageBox
 from Tkinter import *
-from ScrolledText import * 
+from ScrolledText import *
 
 
 tab = "\n"
